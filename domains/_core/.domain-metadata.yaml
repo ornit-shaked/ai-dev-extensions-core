@@ -1,0 +1,65 @@
+# Core Domain Metadata
+
+domain:
+  name: "_core"
+  display_name: "Core Shared Resources"
+  description: "Shared rules, skills, and utilities used across all domains"
+  version: "1.0.0"
+  
+  # Default settings
+  enabled_by_default: true
+  priority: 0  # Loaded first, foundational
+  
+  # Domain owner/maintainer
+  owner:
+    team: "Platform Engineering"
+    contact: "platform@example.com"
+  
+  # What this domain provides
+  provides:
+    workflows: []  # Core has no workflows
+    templates: []  # Core has no templates
+    
+    rules:
+      - id: "no-fabrication"
+        file: "rules/no-fabrication.md"
+        description: "Never fabricate information - always use actual data from code/config"
+        
+      - id: "minimal-changes"
+        file: "rules/minimal-changes.md"
+        description: "Make minimal, focused changes - avoid over-engineering"
+    
+    skills:
+      - id: "parse-yaml"
+        file: "skills/parse-yaml.skill.yaml"
+        description: "Parse and validate YAML files"
+        
+      - id: "analyze-code"
+        file: "skills/analyze-code.skill.yaml"
+        description: "Analyze code structure and patterns"
+  
+  # Dependencies
+  dependencies: []  # Core has no dependencies
+  
+  # Target IDEs
+  compatible_with:
+    - windsurf
+    - cursor
+    - copilot
+  
+  # Documentation
+  documentation:
+    guide: "README.md"
+  
+  # Notes
+  notes: |
+    The _core domain provides foundational rules and skills that are used
+    across all other domains. It should be loaded first and cannot be disabled.
+    
+    Rules define behavioral constraints for AI agents.
+    Skills define reusable capabilities that can be composed into workflows.
+  
+  # Metadata
+  created: "2026-03-19"
+  last_updated: "2026-03-19"
+  schema_version: "1.0.0"

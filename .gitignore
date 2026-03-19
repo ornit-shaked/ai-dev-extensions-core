@@ -1,0 +1,36 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE-specific files
+.vscode/
+.idea/
+*.iml
+.vs/
+
+# Build outputs (if we add build process later)
+build/
+dist/
+*.log
+
+# Node modules (if using npm tooling)
+node_modules/
+
+# Temporary files
+tmp/
+temp/
+.temp/
+
+# Test outputs
+coverage/
+.nyc_output/
+
+# Environment files
+.env
+.env.local
+
+# Editor backups
+*.bak

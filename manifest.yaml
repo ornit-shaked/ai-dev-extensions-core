@@ -1,0 +1,94 @@
+# AI Dev Extensions Core - Manifest
+# This file defines the extension metadata and IDE mappings
+
+extension:
+  name: "ai-dev-extensions-core"
+  version: "0.1.0"
+  description: "Reusable AI development workflows, templates, and rules for multiple IDEs"
+  author: "Ornit Shaked"
+  license: "MIT"
+  
+  # Repository information
+  repository:
+    type: "git"
+    url: "https://github.com/ornit-shaked/ai-dev-extensions-core"
+    bitbucket: "https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-extensions-core.git"
+  
+  # Minimum IDE versions (when applicable)
+  compatibility:
+    windsurf:
+      min_version: "1.0.0"
+      supported: true
+    cursor:
+      min_version: "0.1.0"
+      supported: true
+    copilot:
+      supported: false  # Future support
+
+# Domain configuration
+domains:
+  _core:
+    enabled_by_default: true
+    description: "Shared rules, skills, and utilities"
+    priority: 0  # Loaded first
+    
+  architecture:
+    enabled_by_default: true
+    description: "Architecture documentation and intake workflows"
+    priority: 1
+
+# IDE-specific mappings
+# These tell each IDE where to find relevant files
+ide_mappings:
+  windsurf:
+    base_path: ".windsurf"
+    mappings:
+      workflows:
+        source: "domains/*/workflows/*.md"
+        target: "workflows/"
+        description: "Workflow definitions with frontmatter"
+      
+      templates:
+        source: "domains/*/templates/**/*"
+        target: "templates/"
+        description: "Template files for workflows"
+      
+      rules:
+        source: "rules/*.md"
+        target: "rules/"
+        description: "Windsurf-specific rules"
+      
+      skills:
+        source: "skills/*.skill.yaml"
+        target: "skills/"
+        description: "Skill definitions (future)"
+  
+  cursor:
+    base_path: ".cursor"
+    mappings:
+      rules:
+        source: "rules/*.md"
+        target: "rules/"
+        description: "Cursor rules (adapted from generic rules)"
+  
+  # Future: GitHub Copilot, Continue.dev, etc.
+  copilot:
+    base_path: ".github/copilot"
+    mappings:
+      instructions:
+        source: "rules/*.md"
+        target: "instructions/"
+        description: "Copilot instructions (future)"
+
+# Feature flags (for future use)
+features:
+  skills_support: false      # Phase 2
+  dynamic_loading: false     # Phase 2
+  auto_updates: false        # Phase 3
+  mcp_integration: false     # Phase 3
+
+# Metadata
+metadata:
+  created: "2026-03-19"
+  last_updated: "2026-03-19"
+  schema_version: "1.0.0"

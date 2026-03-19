@@ -1,0 +1,47 @@
+{
+  "name": "@your-org/ai-dev-extensions-core",
+  "version": "0.1.0",
+  "description": "Reusable AI development workflows, templates, and rules for multiple IDEs",
+  "keywords": [
+    "ai",
+    "windsurf",
+    "cursor",
+    "workflows",
+    "templates",
+    "development",
+    "extensions",
+    "architecture",
+    "code-review"
+  ],
+  "author": "Your Organization",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/ai-dev-extensions-core"
+  },
+  "homepage": "https://github.com/your-org/ai-dev-extensions-core#readme",
+  "bugs": {
+    "url": "https://github.com/your-org/ai-dev-extensions-core/issues"
+  },
+  "files": [
+    "domains/",
+    "rules/",
+    "skills/",
+    "manifest.yaml",
+    "README.md",
+    "AGENT_GUIDE.md",
+    "MICROSERVICE_INTEGRATION.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "validate": "node scripts/validate-manifest.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
