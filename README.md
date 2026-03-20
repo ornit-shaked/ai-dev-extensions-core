@@ -56,8 +56,15 @@ git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-exte
 
 **Windows:**
 ```powershell
+# Default: Windsurf
 .\.dev-extensions\scripts\setup-microservice.ps1
+
+# For other IDEs:
+.\.dev-extensions\scripts\setup-microservice.ps1 -IDE cursor
+.\.dev-extensions\scripts\setup-microservice.ps1 -IDE vscode
 ```
+
+> **IDE Support:** Default is Windsurf. Use `-IDE cursor` or `-IDE vscode` if needed.
 
 > **Windows Note:** The script automatically uses copy mode if you don't have admin privileges.
 > - **Copy mode** (automatic): Files are copied - works without admin, but requires re-running setup after package updates

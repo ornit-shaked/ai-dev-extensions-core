@@ -18,7 +18,7 @@
 
 param(
     [string]$MicroservicePath = ".",
-    [string]$IDE = "auto",
+    [string]$IDE = "windsurf",  # windsurf, cursor, or vscode
     [string]$Domains = "default",
     [string]$ConfigFile = ".dev-extensions.config.yaml",
     [switch]$DirectSymlinks = $false,
@@ -292,30 +292,20 @@ if (-not (Test-Path ".dev-extensions")) {
 
 Write-Host "[OK] .dev-extensions exists" -ForegroundColor Green
 
-# Step 2: Detect or validate IDE
+# Step 2: Validate IDE
 Write-Host ""
-Write-Host "Step 2: Detecting IDE..." -ForegroundColor Cyan
+Write-Host "Step 2: Configuring for IDE..." -ForegroundColor Cyan
 
-$detectedIDE = $IDE
+$detectedIDE = $IDE.ToLower()
 
-if ($IDE -eq "auto") {
-    # Auto-detect IDE
-    if (Test-Path ".windsurf") {
-        $detectedIDE = "windsurf"
-        Write-Host "[OK] Detected Windsurf" -ForegroundColor Green
-    } elseif (Test-Path ".cursor") {
-        $detectedIDE = "cursor"
-        Write-Host "[OK] Detected Cursor" -ForegroundColor Green
-    } elseif (Test-Path ".vscode") {
-        $detectedIDE = "windsurf"  # Default to Windsurf for VS Code
-        Write-Host "[OK] Detected VS Code - using Windsurf configuration" -ForegroundColor Green
-    } else {
-        $detectedIDE = "windsurf"
-        Write-Host "[WARNING] No IDE detected - defaulting to Windsurf" -ForegroundColor Yellow
-    }
-} else {
-    Write-Host "[OK] Using specified IDE: $detectedIDE" -ForegroundColor Green
+# Validate IDE choice
+$validIDEs = @("windsurf", "cursor", "vscode")
+if ($validIDEs -notcontains $detectedIDE) {
+    Write-Host "[WARNING] Unknown IDE '$IDE' - defaulting to Windsurf" -ForegroundColor Yellow
+    $detectedIDE = "windsurf"
 }
+
+Write-Host "[OK] Using IDE: $detectedIDE" -ForegroundColor Green
 
 # Step 3: Get enabled domains
 Write-Host ""
