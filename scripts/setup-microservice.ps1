@@ -402,7 +402,7 @@ foreach ($domain in $enabledDomains) {
         foreach ($file in $files) {
             $linkPath = Join-Path $targetDir $file.Name
             $desc = "$($file.Name) ($domain)"
-            New-SafeSymlink -LinkPath $linkPath -TargetPath $file.FullName -Description $desc -DryRun:$DryRun
+            New-SafeSymlink -LinkPath $linkPath -TargetPath $file.FullName -Description $desc -UseCopy:$UseCopy -DryRun:$DryRun
         }
         
         # Handle assets/ directory - symlink to .assets-{domain}/
@@ -411,41 +411,9 @@ foreach ($domain in $enabledDomains) {
         if (Test-Path $assetsPath) {
             $assetLinkPath = Join-Path $targetDir ".assets-$domain"
             $desc = ".assets-$domain/"
-            New-SafeSymlink -LinkPath $assetLinkPath -TargetPath $assetsPath -Description $desc -DryRun:$DryRun
+            New-SafeSymlink -LinkPath $assetLinkPath -TargetPath $assetsPath -Description $desc -UseCopy:$UseCopy -DryRun:$DryRun
         }
     }
-}
-
-# Step 6: Update .gitignore
-Write-Host ""
-Write-Host "Checking .gitignore..." -ForegroundColor Cyan
-
-$gitignoreContent = @"
-
-# AI Dev Extensions
-docs/architecture/
-$ideDir/.temp
-"@
-
-$gitignorePath = ".gitignore"
-$needsUpdate = $false
-
-if (Test-Path $gitignorePath) {
-    $existingContent = Get-Content $gitignorePath -Raw
-    if ($existingContent -notmatch "AI Dev Extensions") {
-        $needsUpdate = $true
-    }
-} else {
-    $needsUpdate = $true
-}
-
-if ($needsUpdate) {
-    if (-not $DryRun) {
-        Add-Content -Path $gitignorePath -Value $gitignoreContent
-    }
-    Write-Host "[OK] Updated .gitignore" -ForegroundColor Green
-} else {
-    Write-Host "[OK] .gitignore already configured" -ForegroundColor Green
 }
 
 # Summary
