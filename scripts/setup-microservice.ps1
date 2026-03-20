@@ -53,6 +53,21 @@ if (-not (Test-Path ".git")) {
     exit 1
 }
 
+# Check for symlink permissions (Windows)
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host ""
+    Write-Host "WARNING: Not running as Administrator" -ForegroundColor Yellow
+    Write-Host "Symlink creation may fail. To fix:" -ForegroundColor Yellow
+    Write-Host "  Option 1: Run PowerShell as Administrator" -ForegroundColor Gray
+    Write-Host "  Option 2: Enable Developer Mode (Settings > Update & Security > For developers)" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "Press Enter to continue anyway, or Ctrl+C to cancel..." -ForegroundColor Cyan
+    if (-not $DryRun) {
+        Read-Host
+    }
+}
+
 # Function to read simple YAML (basic key-value parsing)
 function Read-SimpleYaml {
     param([string]$FilePath)

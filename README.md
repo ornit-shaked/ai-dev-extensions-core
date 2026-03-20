@@ -56,8 +56,13 @@ git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-exte
 
 **Windows:**
 ```powershell
+# Run as Administrator, OR enable Developer Mode first
 .\.dev-extensions\scripts\setup-microservice.ps1
 ```
+
+> **Windows Note:** Creating symlinks requires either:
+> - Running PowerShell as Administrator, OR
+> - Enabling Developer Mode: Settings → Update & Security → For developers → Developer Mode
 
 **Linux/Mac:**
 ```bash
@@ -123,7 +128,7 @@ git submodule add <repo-url> .dev-extensions
 
 ---
 
-## �📦 What's Inside?
+## �� What's Inside?
 
 ### Domains
 
