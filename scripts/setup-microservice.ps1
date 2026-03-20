@@ -218,6 +218,39 @@ function Get-IDEMapping {
     }
 }
 
+# Helper function for creating symlinks
+function New-SafeSymlink {
+    param(
+        [string]$LinkPath,
+        [string]$TargetPath,
+        [string]$Description,
+        [switch]$DryRun
+    )
+    
+    if (Test-Path $LinkPath) {
+        Write-Host "  [SKIP] $Description already exists" -ForegroundColor Yellow
+        return
+    }
+    
+    if (-not (Test-Path $TargetPath)) {
+        Write-Host "  [WARNING] Target not found: $TargetPath" -ForegroundColor Yellow
+        return
+    }
+    
+    if ($DryRun) {
+        Write-Host "  [DRY RUN] Would create: $LinkPath → $TargetPath" -ForegroundColor Cyan
+        return
+    }
+    
+    try {
+        New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetPath -ErrorAction Stop | Out-Null
+        Write-Host "  [OK] Created $Description" -ForegroundColor Green
+    } catch {
+        Write-Host "  [ERROR] Failed to create $Description" -ForegroundColor Red
+        Write-Host "    Try running PowerShell as Administrator" -ForegroundColor Yellow
+    }
+}
+
 # Step 1: Check for .dev-extensions
 Write-Host "Step 1: Checking for .dev-extensions..." -ForegroundColor Cyan
 
@@ -380,39 +413,6 @@ if ($needsUpdate) {
     Write-Host "[OK] Updated .gitignore" -ForegroundColor Green
 } else {
     Write-Host "[OK] .gitignore already configured" -ForegroundColor Green
-}
-
-# Helper function for creating symlinks
-function New-SafeSymlink {
-    param(
-        [string]$LinkPath,
-        [string]$TargetPath,
-        [string]$Description,
-        [switch]$DryRun
-    )
-    
-    if (Test-Path $LinkPath) {
-        Write-Host "  [SKIP] $Description already exists" -ForegroundColor Yellow
-        return
-    }
-    
-    if (-not (Test-Path $TargetPath)) {
-        Write-Host "  [WARNING] Target not found: $TargetPath" -ForegroundColor Yellow
-        return
-    }
-    
-    if ($DryRun) {
-        Write-Host "  [DRY RUN] Would create: $LinkPath → $TargetPath" -ForegroundColor Cyan
-        return
-    }
-    
-    try {
-        New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetPath -ErrorAction Stop | Out-Null
-        Write-Host "  [OK] Created $Description" -ForegroundColor Green
-    } catch {
-        Write-Host "  [ERROR] Failed to create $Description" -ForegroundColor Red
-        Write-Host "    Try running PowerShell as Administrator" -ForegroundColor Yellow
-    }
 }
 
 # Summary
