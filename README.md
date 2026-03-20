@@ -35,7 +35,7 @@ Think of it as a **"plugin pack"** for AI development tools.
 
 ## 🚀 Quick Start
 
-### Two Simple Steps
+### Three Simple Steps
 
 **Step 1: Add as Git Submodule**
 
@@ -44,7 +44,13 @@ cd your-microservice
 git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core.git .dev-extensions
 ```
 
-**Step 2: Run Setup Script**
+**Step 2: Initialize Submodule**
+
+```bash
+git submodule update --init --recursive
+```
+
+**Step 3: Run Setup Script**
 
 **Windows:**
 ```powershell
