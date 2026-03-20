@@ -22,6 +22,7 @@ param(
     [string]$Domains = "default",
     [string]$ConfigFile = ".dev-extensions.config.yaml",
     [switch]$DirectSymlinks = $false,
+    [switch]$UseCopy = $false,
     [switch]$DryRun = $false
 )
 
@@ -55,17 +56,13 @@ if (-not (Test-Path ".git")) {
 
 # Check for symlink permissions (Windows)
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-if (-not $isAdmin) {
+if (-not $isAdmin -and -not $UseCopy) {
     Write-Host ""
-    Write-Host "WARNING: Not running as Administrator" -ForegroundColor Yellow
-    Write-Host "Symlink creation may fail. To fix:" -ForegroundColor Yellow
-    Write-Host "  Option 1: Run PowerShell as Administrator" -ForegroundColor Gray
-    Write-Host "  Option 2: Enable Developer Mode (Settings > Update & Security > For developers)" -ForegroundColor Gray
+    Write-Host "INFO: Not running as Administrator - will use copy mode instead of symlinks" -ForegroundColor Cyan
+    Write-Host "  Files will be copied instead of symlinked (requires manual update when package changes)" -ForegroundColor Gray
+    Write-Host "  To use symlinks: Run as Administrator or enable Developer Mode" -ForegroundColor Gray
     Write-Host ""
-    Write-Host "Press Enter to continue anyway, or Ctrl+C to cancel..." -ForegroundColor Cyan
-    if (-not $DryRun) {
-        Read-Host
-    }
+    $UseCopy = $true
 }
 
 # Function to read simple YAML (basic key-value parsing)
@@ -233,12 +230,13 @@ function Get-IDEMapping {
     }
 }
 
-# Helper function for creating symlinks
+# Helper function for creating symlinks or copies
 function New-SafeSymlink {
     param(
         [string]$LinkPath,
         [string]$TargetPath,
         [string]$Description,
+        [switch]$UseCopy,
         [switch]$DryRun
     )
     
@@ -253,16 +251,32 @@ function New-SafeSymlink {
     }
     
     if ($DryRun) {
-        Write-Host "  [DRY RUN] Would create: $LinkPath → $TargetPath" -ForegroundColor Cyan
+        $action = if ($UseCopy) { "copy" } else { "symlink" }
+        Write-Host "  [DRY RUN] Would $action`: $LinkPath → $TargetPath" -ForegroundColor Cyan
         return
     }
     
-    try {
-        New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetPath -ErrorAction Stop | Out-Null
-        Write-Host "  [OK] Created $Description" -ForegroundColor Green
-    } catch {
-        Write-Host "  [ERROR] Failed to create $Description" -ForegroundColor Red
-        Write-Host "    Try running PowerShell as Administrator" -ForegroundColor Yellow
+    if ($UseCopy) {
+        # Copy mode - copy file or directory
+        try {
+            if (Test-Path $TargetPath -PathType Container) {
+                Copy-Item -Path $TargetPath -Destination $LinkPath -Recurse -ErrorAction Stop
+            } else {
+                Copy-Item -Path $TargetPath -Destination $LinkPath -ErrorAction Stop
+            }
+            Write-Host "  [OK] Copied $Description" -ForegroundColor Green
+        } catch {
+            Write-Host "  [ERROR] Failed to copy $Description" -ForegroundColor Red
+        }
+    } else {
+        # Symlink mode
+        try {
+            New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetPath -ErrorAction Stop | Out-Null
+            Write-Host "  [OK] Created symlink for $Description" -ForegroundColor Green
+        } catch {
+            Write-Host "  [ERROR] Failed to create symlink for $Description" -ForegroundColor Red
+            Write-Host "    Run as Administrator or use -UseCopy parameter" -ForegroundColor Yellow
+        }
     }
 }
 
@@ -340,9 +354,13 @@ if (-not (Test-Path $ideDir)) {
     Write-Host "[OK] $ideDir exists" -ForegroundColor Green
 }
 
-# Step 5: Create symlinks (flatten mode)
+# Step 5: Create symlinks or copies (flatten mode)
 Write-Host ""
-Write-Host "Creating symlinks (flatten mode)..." -ForegroundColor Cyan
+if ($UseCopy) {
+    Write-Host "Copying files (flatten mode)..." -ForegroundColor Cyan
+} else {
+    Write-Host "Creating symlinks (flatten mode)..." -ForegroundColor Cyan
+}
 
 foreach ($domain in $enabledDomains) {
     $domainPath = ".dev-extensions\domains\$domain"

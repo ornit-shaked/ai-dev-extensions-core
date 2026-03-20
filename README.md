@@ -56,13 +56,12 @@ git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-exte
 
 **Windows:**
 ```powershell
-# Run as Administrator, OR enable Developer Mode first
 .\.dev-extensions\scripts\setup-microservice.ps1
 ```
 
-> **Windows Note:** Creating symlinks requires either:
-> - Running PowerShell as Administrator, OR
-> - Enabling Developer Mode: Settings → Update & Security → For developers → Developer Mode
+> **Windows Note:** The script automatically uses copy mode if you don't have admin privileges.
+> - **Copy mode** (automatic): Files are copied - works without admin, but requires re-running setup after package updates
+> - **Symlink mode** (recommended): Requires Administrator OR Developer Mode - updates automatically with package
 
 **Linux/Mac:**
 ```bash
