@@ -178,14 +178,20 @@ function Get-IDEMapping {
     if ($content -match $idePattern) {
         $ideSection = $matches[0]
         
-        $mapping = @{}
+        # Start with fallback defaults
+        $mapping = @{
+            target_directory = ".windsurf"
+            workflows = "workflows"
+            rules = "rules"
+            skills = "skills"
+        }
         
-        # Extract target_directory
+        # Extract target_directory (override if found)
         if ($ideSection -match 'target_directory:\s*"([^"]+)"') {
             $mapping['target_directory'] = $matches[1]
         }
         
-        # Extract mappings
+        # Extract mappings (override if found)
         if ($ideSection -match '(?ms)mappings:(.*?)(?=\n\s+\w+:|$)') {
             $mappingsSection = $matches[1]
             

@@ -2,14 +2,14 @@
 # Setup AI Dev Extensions Core in Microservice
 # Run this script from your microservice root directory
 #
-# Behavior:
-# - If .dev-extensions doesn't exist: Adds as git submodule
-# - If .dev-extensions exists: Updates to latest version from remote
-# - Always creates/updates symlinks and .gitignore
+# Prerequisites:
+# - .dev-extensions submodule must already exist
+# - Run from microservice root (where .git/ is)
 #
-# To force re-initialization (e.g., if submodule is broken):
-#   rm -rf .dev-extensions
-#   Then run this script again
+# What it does:
+# - Detects Windsurf IDE (simplified version - no multi-IDE support)
+# - Creates symlinks for workflows and rules
+# - Updates .gitignore
 
 set -e
 
@@ -39,36 +39,25 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# Step 1: Add or update submodule
-# Strategy: Always run 'git submodule update' to ensure latest version
+# Step 1: Check for .dev-extensions
+echo "Step 1: Checking for .dev-extensions..."
 if [ ! -d ".dev-extensions" ]; then
-    # Submodule doesn't exist - add it
-    echo "Adding ai-dev-extensions-core as git submodule..."
-    
-    if git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core .dev-extensions &> /dev/null; then
-        echo "✓ Added .dev-extensions submodule"
-    else
-        echo "ERROR: Failed to add submodule!"
-        echo "If submodule already exists in .gitmodules, remove it first or delete .dev-extensions/"
-        exit 1
-    fi
+    echo "[ERROR] .dev-extensions not found"
+    echo "  Please add the submodule first:"
+    echo "  git submodule add <repo-url> .dev-extensions"
+    exit 1
 fi
 
-# Always update submodule to ensure latest version
-# This runs whether submodule was just added or already existed
-echo "Updating submodule to latest version..."
-if git submodule update --init --recursive --remote &> /dev/null; then
-    echo "✓ Submodule up to date"
-else
-    echo "WARNING: Submodule update had issues, but continuing..."
-fi
+echo "[OK] .dev-extensions exists"
 
-# Step 2: Create .windsurf directory
+# Step 2: Create .windsurf directory (hardcoded - bash version is Windsurf-only)
+echo ""
+echo "Step 2: Creating IDE directory..."
 if [ ! -d ".windsurf" ]; then
     mkdir -p .windsurf
-    echo "✓ Created .windsurf directory"
+    echo "[OK] Created .windsurf directory"
 else
-    echo "✓ .windsurf directory already exists"
+    echo "[OK] .windsurf directory already exists"
 fi
 
 # Step 3: Create symlinks
@@ -81,17 +70,17 @@ create_safe_symlink() {
     local description="$3"
     
     if [ -e "$link_path" ]; then
-        echo "  ⚠ $description already exists - skipping"
+        echo "  [SKIP] $description already exists"
         return
     fi
     
     if [ ! -e "$target_path" ]; then
-        echo "  ⚠ Target not found: $target_path - skipping"
+        echo "  [WARNING] Target not found: $target_path"
         return
     fi
     
     ln -s "$target_path" "$link_path"
-    echo "  ✓ Created $description"
+    echo "  [OK] Created $description"
 }
 
 if [ "$DIRECT_SYMLINKS" = "true" ]; then
@@ -123,13 +112,13 @@ docs/architecture/
 if [ -f ".gitignore" ]; then
     if ! grep -q "docs/architecture/" .gitignore; then
         echo "$GITIGNORE_CONTENT" >> .gitignore
-        echo "✓ Updated .gitignore"
+        echo "[OK] Updated .gitignore"
     else
-        echo "✓ .gitignore already contains AI Dev Extensions entries"
+        echo "[OK] .gitignore already contains AI Dev Extensions entries"
     fi
 else
     echo "$GITIGNORE_CONTENT" > .gitignore
-    echo "✓ Created .gitignore"
+    echo "[OK] Created .gitignore"
 fi
 
 # Step 5: Summary

@@ -91,7 +91,39 @@ git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-exte
 
 ---
 
-## 📦 What's Inside?
+## � Troubleshooting
+
+### Removing/Reinstalling Submodule
+
+If you get `fatal: '.dev-extensions' already exists in the index` after manually deleting `.dev-extensions`, you need to clean up git's submodule tracking:
+
+**Windows (PowerShell):**
+```powershell
+# Clean removal
+git submodule deinit -f .dev-extensions
+git rm -f .dev-extensions
+Remove-Item -Recurse -Force .git\modules\.dev-extensions
+
+# Then add again
+git submodule add <repo-url> .dev-extensions
+```
+
+**Linux/Mac (Bash):**
+```bash
+# Clean removal
+git submodule deinit -f .dev-extensions
+git rm -f .dev-extensions
+rm -rf .git/modules/.dev-extensions
+
+# Then add again
+git submodule add <repo-url> .dev-extensions
+```
+
+**Why?** Git tracks submodules in 3 places: `.gitmodules`, git index, and `.git/modules/`. Manual deletion only removes files, not tracking info.
+
+---
+
+## �📦 What's Inside?
 
 ### Domains
 
