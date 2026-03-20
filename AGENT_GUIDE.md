@@ -1,482 +1,229 @@
-# Agent Consumption Guide
+# Agent Guide - Package Structure
 
-**How AI agents should consume and use this extension package**
+**How AI agents should understand and navigate this package**
 
-This guide is for **AI assistants** (like Claude, GPT-4, Windsurf AI, etc.) to understand how to properly consume workflows, templates, and rules from this package.
+This guide explains the **package structure**, **file organization**, and **deployment system** - not how to execute specific workflows.
 
 ---
 
-## 📚 Navigation for Agents
+## 🎯 Purpose
 
-**Core Package Files:**
-- **[manifest.yaml](./manifest.yaml)** - Package capabilities, domains, IDE compatibility
-- **[config/ide-mapping.yaml](./config/ide-mapping.yaml)** - Deployment rules and flatten mode
+This is **ai-dev-extensions-core** - a structured package containing:
+- **Workflows** (`.md` files with step-by-step instructions)
+- **Rules** (`.md` files with behavioral constraints)
+- **Skills** (`.skill.yaml` files with capability definitions)
 
-**Domain Configuration:**
-- **[.domain-metadata.yaml](./domains/_core/.domain-metadata.yaml)** - Domain metadata format and examples
-- **[domains/_core/](./domains/_core/)** - Shared rules and skills
-- **[domains/architecture/](./domains/architecture/)** - Architecture workflows with assets
+Each workflow/rule/skill has its own documentation. This guide is about the **package itself**.
 
-**Available Workflows:**
-- **[architecture-intake-create.md](./domains/architecture/workflows/architecture-intake-create.md)** - Create architecture documentation
-- **[architecture-intake-resolve.md](./domains/architecture/workflows/architecture-intake-resolve.md)** - Resolve architecture issues
+---
 
-**Human Documentation (update when making changes):**
-- **[README.md](./README.md)** - Main entry point with navigation
-- **[SETUP.md](./SETUP.md)** - Integration guide
+## 📚 Key Files for Agents
+
+- **[manifest.yaml](./manifest.yaml)** - Package metadata, domains, IDE compatibility
+- **[config/ide-mapping.yaml](./config/ide-mapping.yaml)** - How files deploy to different IDEs
+- **[domains/agent.md](./domains/agent.md)** - Creating new domains
+
+**Human docs:**
+- **[README.md](./README.md)** - User-facing Quick Start
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history
 
-**Specialized Guides (context-efficient):**
-- **[domains/agent.md](./domains/agent.md)** - Creating new domains (detailed guide)
-- **[examples/agent.md](./examples/agent.md)** - Creating example outputs (detailed guide)
-
 ---
 
-## 🤖 For AI Agents: What is This Package?
+## � Package Directory Structure
 
-You are reading documentation for **ai-dev-extensions-core**, a structured collection of:
-- Workflows (procedural guides)
-- Templates (document skeletons)
-- Rules (behavioral constraints)
-- Skills (capability definitions)
-
-This content helps you perform tasks more accurately and consistently across different projects.
-
----
-
-## 📚 Package Structure
-
+**Source (this repository):**
 ```
-workflows/
-├── architecture-intake-create.md    # Individual file symlinks
-├── architecture-intake-resolve.md
-└── .assets-architecture/            # Symlinked from source assets/
-    └── templates/                   # Workflow assets
-```
-
-### IDE Mappings
-
-Each IDE has different directory conventions:
-- **Windsurf**: `.windsurf/workflows/`, `.windsurf/rules/`, `.windsurf/skills/`
-- **Cursor**: `.cursor/prompts/`, `.cursor/rules/`
-- **VS Code**: `.vscode/snippets/` (planned)
-
-**Flatten Mode (default):**
-- Individual workflow files are symlinked directly: `workflows/architecture-intake-create.md`
-- Subdirectories (templates, schemas) are symlinked to `.assets-{domain}/`
-- This ensures IDEs discover all workflows (required for Windsurf)
-
-Content types map to IDE directories:
-- `workflows/*.md` → Individual file symlinks in IDE workflow directory
-- `workflows/templates/` → `.assets-{domain}/templates/` in IDE directory
-- `rules/*.md` → Individual file symlinks in IDE rules directory
-- `skills/*.skill.yaml` → Individual file symlinks in IDE skills directory for workflow-specific assets
-- **Rules**: `.md` files with behavioral constraints
-- **Skills**: `.skill.yaml` files with capability definitions
-
-**How it works:**
-1. Setup script reads `config/ide-mapping.yaml`
-2. Detects which IDE is in use (or user specifies)
-3. Creates symlinks to appropriate directories with correct naming
-4. Each IDE may have different content type support
-
-**For manual integration**, refer to `config/ide-mapping.yaml` to see:
-- Target directories per IDE
-- Content type mappings (e.g., workflows → prompts in Cursor)
-- Feature support matrix
-
-### IDE Mapping Explanation
-
-The IDE mapping feature allows agents to integrate with various Integrated Development Environments (IDEs) seamlessly. Here's a breakdown of how it works:
-
-*   **IDE Detection**: The setup script automatically detects the IDE in use or allows the user to specify it manually.
-*   **Directory Mapping**: Based on the detected IDE, the script creates symlinks to the corresponding directories with the correct naming conventions.
-*   **Content Type Support**: Each IDE may have different content type support, which is defined in the `config/ide-mapping.yaml` file.
-
-By using the IDE mapping feature, agents can easily integrate with different IDEs and access the necessary files and directories.
-
----
-
-## 🎯 How to Consume Workflows
-
-### Workflow Format
-
-All workflows are **Markdown files** with **frontmatter**:
-
-```markdown
----
-description: Extract and document service architectural knowledge
-version: 2.0.0
-priority: ESSENTIAL
----
-
-# Workflow Title
-
-## Step 1: Do something
-...
+ai-dev-extensions-core/
+├── domains/
+│   ├── _core/
+│   │   ├── .domain-metadata.yaml
+│   │   ├── workflows/
+│   │   ├── rules/
+│   │   └── skills/
+│   └── architecture/
+│       ├── .domain-metadata.yaml
+│       ├── workflows/
+│       │   ├── workflow1
+│       │   ├── workflow2
+│       │   └── assets/
+│       │       ├── templates/
+│       │       └── schemas/
+│       ├── rules/
+│       ├── skills/
+│       └── README.md
+├── manifest.yaml
+└── config/
+    └── ide-mapping.yaml
 ```
 
-### Reading Workflows
-
-1. **Parse frontmatter** for metadata
-2. **Follow steps sequentially** - don't skip unless instructed
-3. **Respect constraints** (e.g., "NO FABRICATION", "needs-human: true")
-4. **Use templates** referenced in workflow steps
-
-### Example: Architecture Intake Workflow
-
-When user triggers: `/architecture-intake-create`
-
-**You should:**
-1. Read: `domains/architecture/workflows/architecture-intake-create.md`
-2. Follow each section (1-8) step by step
-3. Use templates from: `domains/architecture/templates/`
-4. Mark items `needs-human: true` when auto-detection fails
-5. Generate output in `docs/architecture/` (in the target microservice repo)
-
-**Key principles:**
-- ✅ Only document what exists in codebase
-- ✅ Mark uncertain items for human review
-- ❌ Never fabricate endpoints, configs, or code
-- ✅ Use "TBD" or "MISSING" for unavailable data
-
----
-
-## 📋 How to Use Templates
-
-### Template Format
-
-Templates use **placeholders** in double curly braces:
-
-```markdown
-# {{SERVICE_NAME}} - Identity
-
-## Purpose
-{{PURPOSE_FROM_README}}
-
-## Ownership
-- Team: {{TEAM_NAME}}
-- Repository: {{GIT_URL}}
+**Target (after deployment to a project):**
+```
+your-project/
+├── .dev-extensions/          # Submodule pointing to this repo
+└── .{ide}/                  # Path depends on IDE (see config/ide-mapping.yaml)
+    ├── {workflows-dir}/     # e.g., workflows/ (Windsurf) or prompts/ (Cursor)
+    │   ├── workflow1        # Symlink to source
+    │   ├── workflow2        # Symlink to source
+    │   └── .assets-architecture/  # Symlink to workflows/assets/
+    ├── {rules-dir}/
+    │   └── rule1
+    └── {skills-dir}/
+        └── skill1
 ```
 
-### Filling Templates
+**Note:** Actual paths depend on IDE. See table below or `config/ide-mapping.yaml`.
 
-1. **Read template** from `domains/*/templates/`
-2. **Collect data** from codebase (as instructed in workflow)
-3. **Replace placeholders** with actual values or "TBD"
-4. **Never leave placeholders** in output - use "TBD" if data missing
-5. **Preserve structure** - don't remove sections
+---
 
-### Example: Identity Template
+## 🔄 How Files Are Copied/Deployed
 
-```markdown
-# Input Template
-Team: {{TEAM_NAME}}
+### Flatten Mode (Default)
 
-# ✅ Good Output
-Team: Platform Engineering
+**All content types (workflows/rules/skills):**
+- Individual files are symlinked directly
+- If `assets/` subdirectory exists, it's symlinked as `.assets-{domain}/`
 
-# ✅ Also Good (if unknown)
-Team: TBD - requires human input
+**Example (Windsurf):**
+```
+Source: domains/architecture/workflows/intake
+Target: .windsurf/workflows/intake
 
-# ❌ Bad Output (placeholder left)
-Team: {{TEAM_NAME}}
+Source: domains/architecture/workflows/assets/
+Target: .windsurf/workflows/.assets-architecture/
 ```
 
+**Note:** rules/skills may have also assets/ directories
+
+**Why flatten?**
+- IDEs need to discover all workflow files at top level
+- Assets remain accessible via relative paths
+
+### Naming Conventions
+
+**Files:** Lowercase with hyphens (extension determined by type)
+- ✅ `architecture-intake-create` (workflow)
+- ✅ `no-fabrication` (rule)
+- ❌ `Architecture_Intake`
+
+**Domains:** Lowercase, underscore for core
+- ✅ `_core`
+- ✅ `architecture`
+- ✅ `code-review`
+
+**Assets directories:** `.assets-{domain}`
+- ✅ `.assets-architecture`
+- ✅ `.assets-security`
+
 ---
 
-## 📏 How to Apply Rules
+## 🎨 Multi-IDE Support
 
-### Rule Format
+### Supported IDEs
 
-Rules are **Markdown files** with clear directives:
+| IDE | Workflows Directory | Rules Directory | Skills Directory | Status |
+|-----|---------------------|-----------------|------------------|--------|
+| Windsurf | `.windsurf/workflows/` | `.windsurf/rules/` | `.windsurf/skills/` | ✅ Full |
+| Cursor | `.cursor/prompts/` | `.cursor/rules/` | - | ✅ Partial |
+| VS Code | `.vscode/` | - | - | 🚧 Planned |
 
-```markdown
-# No Fabrication Rule
+**See `config/ide-mapping.yaml` for complete mapping and configuration.**
 
-## Directive
-Never invent or guess:
-- API endpoints
-- Configuration values
-- Error codes
-...
+### How IDE Detection Works
 
-## When Uncertain
-Mark as `needs-human: true`
+1. **Auto-detect:** Check for `.windsurf/`, `.cursor/`, `.vscode/`
+2. **Fallback:** User specifies via `-IDE` parameter
+3. **Map content:** Read `config/ide-mapping.yaml` for IDE-specific paths
+4. **Create symlinks:** To correct directories per IDE
+
+**Important:**
+- Paths shown in examples use Windsurf (`.windsurf/workflows/`)
+- Other IDEs use different paths (e.g., Cursor uses `.cursor/prompts/`)
+- Check `config/ide-mapping.yaml` for your IDE's configuration
+- Windsurf is prioritized over VS Code (Windsurf extends VS Code)
+
+---
+
+## �️ Domain Structure
+
+Each domain is a self-contained unit:
+
+```
+domains/{domain-name}/
+├── .domain-metadata.yaml    # Domain configuration
+├── workflows/               # Workflow files
+│   ├── workflow1
+│   └── assets/             # Optional: for workflow-specific files
+│       ├── templates/
+│       └── schemas/
+├── rules/                   # Optional: may have assets/ too
+├── skills/                  # Optional: may have assets/ too
+└── README.md               # Domain documentation
 ```
 
-### Applying Rules
+### Domain Metadata
 
-1. **Load rules** from `domains/_core/rules/*.md` at session start
-2. **Apply globally** - rules affect all tasks, not just workflows
-3. **Prioritize rules** over other instructions if conflict
-4. **Document violations** - if you must break a rule, explain why
+Each domain has `.domain-metadata.yaml` with:
+- Domain name and description
+- Dependencies (e.g., `_core` loaded first)
+- Workflows/rules/skills provided
+- IDE compatibility
 
-### Common Rules
-
-| Rule | Applies To | Key Constraint |
-|------|-----------|----------------|
-| `no-fabrication.md` | All workflows | Never invent data not in codebase |
-| `minimal-changes.md` | Code edits | Prefer single-line fixes |
-| *(more as added)* | ... | ... |
+**See individual domain docs for workflow/rule/skill details.**
 
 ---
 
-## 🔧 Domain-Specific Guidance
+## 📝 File Types
 
-### Architecture Domain
+### Workflows
+- Markdown files with YAML frontmatter
+- Step-by-step instructions
+- May have `assets/` subdirectory (templates, schemas, etc.)
 
-**Purpose**: Document microservice/library architecture
+### Rules
+- Markdown files
+- Behavioral constraints
+- Applied globally or per-domain
+- May have `assets/` subdirectory if needed
 
-**Workflows**:
-- `architecture-intake-create.md` - Extract architecture knowledge
-- `architecture-intake-resolve.md` - Complete flagged items
+### Skills
+- YAML files (`.skill.yaml` extension)
+- Capability definitions
+- May have `assets/` subdirectory if needed
 
-**Key behaviors**:
-- Auto-detect technology stack (build files, configs)
-- Mark business context as `needs-human: true`
-- Generate C4 views from code structure
-- Never guess non-goals or external integrations
+**Assets deployment:** If any content type has an `assets/` subdirectory, it's deployed as `.assets-{domain}/` in the target IDE.
 
-**Output format**: Markdown files in `docs/architecture/` within the microservice repository
-
-**Agent Navigation**:
-- Read `domains/architecture/.domain-metadata.yaml` for structured section definitions
-- Use `output_structure.sections[].use_when` to determine which files to read
-- Check `_metadata.yaml` in output for completeness and agent_ready status
-
----
-
-### Future Domains
-
-**Planned but not yet implemented**:
-- **Code Review**: Code review preparation and execution workflows
-- **Security**: Security audit and threat modeling workflows (opt-in)
+**Each file type has its own documentation within the file.**
 
 ---
 
-## �️ Navigating Domain Metadata
+## � Finding Content
 
-### Understanding .domain-metadata.yaml
+**To use a workflow:**
+1. Check `domains/{domain}/workflows/`
+2. Read the workflow file itself for instructions
 
-Each domain has a `.domain-metadata.yaml` file with **structured information for agents**.
+**To understand a domain:**
+1. Read `domains/{domain}/README.md`
+2. Check `.domain-metadata.yaml` for structure
 
-**Key sections for agents**:
-
-```yaml
-domain:
-  name: "architecture"
-  dependencies:
-    - _core  # Load core rules/skills first
-
-output_structure:
-  location: "docs/architecture/"
-  sections:
-    - id: "3-contracts"
-      file: "3-contracts.md"
-      use_when:
-        - "Modifying or adding APIs"
-        - "Understanding event contracts"
-      contains:
-        - "REST endpoints"
-        - "OpenAPI spec location"
-```
-
-### How to Use Domain Metadata
-
-**When starting a task**:
-1. Read `domains/{domain}/.domain-metadata.yaml`
-2. Check `dependencies` - load those domains first
-3. Review `output_structure.sections`
-4. Use `use_when` to find relevant sections
-
-**Example - API change task**:
-```
-Task: "Add new user search endpoint"
-
-1. Read domains/architecture/.domain-metadata.yaml
-2. Find sections with use_when containing "APIs"
-   → 3-contracts.md: "Modifying or adding APIs"
-3. Read docs/architecture/3-contracts.md
-4. Follow existing patterns
-5. Update documentation
-```
-
-**Metadata fields guide**:
-- `typical_source: AUTO` → High confidence, machine-extracted
-- `typical_source: SEMI` → Medium confidence, needs validation
-- `typical_source: MANUAL` → Low confidence, requires human input
-- `priority: ESSENTIAL` → Read before making changes
-- `priority: OPERATIONAL` → Nice to have, optional
+**To create new domains:**
+1. Read `domains/agent.md`
+2. Follow the template structure
 
 ---
 
-## � Error Handling
+## ✅ Package Maintenance
 
-### When Data is Missing
+**When updating files:**
+- Follow naming conventions (lowercase-with-hyphens)
+- Update `.domain-metadata.yaml` when adding workflows/rules/skills
+- Update `CHANGELOG.md` with changes
+- Keep `manifest.yaml` version current
 
-```markdown
-# ❌ Wrong
-API Base URL: (not found)
-
-# ✅ Correct
-API Base URL: **MISSING** - requires human input
-```
-
-### When File Doesn't Exist
-
-```markdown
-# ❌ Wrong
-(Skip section silently)
-
-# ✅ Correct
-**Note**: OpenAPI spec not found at expected locations:
-- ✗ src/main/resources/openapi.yaml
-- ✗ src/main/resources/swagger.json
-
-Marked as `needs-human: true` in metadata.
-```
-
-### When Workflow Step Fails
-
-1. **Document the failure** in output
-2. **Continue with next step** (don't abort entire workflow)
-3. **Add to open issues** (`_open-issues.md`)
-4. **Mark section** as PARTIAL in metadata
+**When creating examples:**
+- Read `examples/agent.md`
+- Place in `examples/{domain}/{example-name}/output/`
 
 ---
 
-## 📊 Metadata Management
-
-### Section Metadata Format
-
-Every workflow section should generate:
-
-```yaml
-source: AUTO|SEMI|MANUAL
-completeness: COMPLETE|PARTIAL|MISSING
-needs_human: true|false
-risk: LOW|MEDIUM|HIGH
-notes: "Additional context"
-```
-
-### Aggregating Metadata
-
-After completing workflow:
-1. Collect metadata from all sections
-2. Generate `_metadata.yaml` summary
-3. Count complete/partial/missing sections
-4. Determine `agent_ready` status
-
----
-
-## ✅ Validation Checklist
-
-Before finishing any workflow:
-
-- [ ] All template placeholders replaced (or "TBD")
-- [ ] No fabricated data (only what exists in codebase)
-- [ ] Metadata blocks present in all sections
-- [ ] Open issues documented in `_open-issues.md`
-- [ ] Output files in correct location (`docs/architecture/` for architecture domain)
-- [ ] `_metadata.yaml` generated with completeness tracking
-- [ ] Rules followed (no-fabrication, minimal-changes, etc.)
-- [ ] Checked domain dependencies (e.g., _core loaded first)
-
----
-
-## 🎓 Learning from Examples
-
-Check `examples/` directory for complete workflow outputs:
-
-**Architecture Domain Example**:
-- Location: `examples/architecture/user-service-example/`
-- Contains: All 8 sections + metadata + open issues
-- Study: Output quality, metadata tracking, completeness levels
-
-**What to learn**:
-- Expected output format and structure
-- How to mark items `needs-human: true`
-- Metadata patterns (AUTO/SEMI/MANUAL)
-- Open issues prioritization (HIGH/MEDIUM/LOW)
-- Agent-ready assessment criteria
-
-**Key observation**: ~60-70% can be auto-extracted, rest needs validation or human input.
-
----
-
-## 🔄 Version Compatibility
-
-### Checking Workflow Version
-
-```markdown
----
-version: 2.0.0
----
-```
-
-- **Major version change** (1.x → 2.x): Breaking changes, review carefully
-- **Minor version change** (2.0 → 2.1): New features, backwards compatible
-- **Patch version change** (2.0.0 → 2.0.1): Bug fixes only
-
-### Handling Version Mismatches
-
-If workflow version > your training data:
-1. Read workflow carefully for new instructions
-2. Follow latest version (workflows are authoritative)
-3. Note version in output metadata
-
----
-
-## 🤝 Multi-Agent Scenarios
-
-### When Multiple Agents Use Same Package
-
-- **Read-only access**: Never modify package content
-- **Isolated outputs**: Write to project-specific locations (e.g., `docs/architecture/`)
-- **No state sharing**: Each agent session is independent
-
-### Consistency Across Projects
-
-Using same package version ensures:
-- Same workflow steps
-- Same template structure
-- Same quality standards
-
-**Result**: Consistent documentation across all microservices
-
----
-
-## 📞 When to Ask for Human Help
-
-Flag for human input when:
-
-1. **Business context needed** (non-goals, priorities)
-2. **Ambiguous code** (multiple interpretations possible)
-3. **External dependencies** (can't auto-detect integration)
-4. **Security decisions** (risk assessment required)
-5. **Incomplete information** (missing critical files)
-
-**How to flag**:
-```yaml
-needs_human: true
-notes: "OpenAPI spec not found - manual documentation required"
-```
-
----
-
-## 🎯 Success Criteria
-
-You're using this package correctly when:
-
-✅ Output matches template structure exactly  
-✅ No fabricated data (all from codebase)  
-✅ Metadata is accurate and complete  
-✅ Human review items clearly flagged  
-✅ Rules are consistently applied  
-
----
-
-**This is a living document. Workflows and templates may evolve over time.**
-
-**Always check workflow version and follow the latest instructions.**
+**For workflow execution details, read the workflow files themselves. This guide is only about package structure.**

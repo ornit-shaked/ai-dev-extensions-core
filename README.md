@@ -35,51 +35,50 @@ Think of it as a **"plugin pack"** for AI development tools.
 
 ## 🚀 Quick Start
 
-### Automated Setup (Recommended)
+### Two Simple Steps
 
-**One command** - adds submodule, creates symlinks, updates .gitignore:
+**Step 1: Add as Git Submodule**
+
+```bash
+cd your-microservice
+git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core.git .dev-extensions
+```
+
+**Step 2: Run Setup Script**
 
 **Windows:**
 ```powershell
-cd your-microservice
-# Run from submodule after adding it (see Manual Setup below for first-time)
 .\.dev-extensions\scripts\setup-microservice.ps1
 ```
 
 **Linux/Mac:**
 ```bash
-cd your-microservice
-# Run from submodule after adding it
 bash .dev-extensions/scripts/setup-microservice.sh
 ```
 
-**Options:**
+**That's it!** The script will:
+- ✅ Detect your IDE (Windsurf/Cursor/VS Code)
+- ✅ Create symlinks for workflows and rules
+- ✅ Update `.gitignore`
+- ✅ Load default domains (`_core` + `architecture`)
+
+---
+
+### Options
+
 ```powershell
-# Specific IDE
-.\setup-microservice.ps1 -IDE cursor
+# Use specific IDE
+.\.dev-extensions\scripts\setup-microservice.ps1 -IDE cursor
 
-# Specific domains
-.\setup-microservice.ps1 -Domains "_core,architecture"
-
-# Dry run (see what would happen)
-.\setup-microservice.ps1 -DryRun
+# Preview changes without modifying anything
+.\.dev-extensions\scripts\setup-microservice.ps1 -DryRun
 ```
 
-> **Note**: For private repositories, first add the submodule manually, then run the script.
-> **Important**: Read script comments for IDE detection limitations (IntelliJ, VS Code). See `scripts/setup-microservice.ps1` header.
+### Bitbucket Users
 
-### Manual Setup
-
-**Step 1: Add as Git Submodule**
+Use Bitbucket URL in Step 1:
 ```bash
-cd your-microservice
-git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core .dev-extensions
-git submodule update --init --recursive
-```
-
-**Step 2: Run Setup Script** (or create symlinks manually - see [MICROSERVICE_INTEGRATION.md](./MICROSERVICE_INTEGRATION.md))
-```bash
-.\.dev-extensions\scripts\setup-microservice.ps1
+git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-extensions-core.git .dev-extensions
 ```
 
 ---

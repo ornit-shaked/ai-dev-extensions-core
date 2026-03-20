@@ -1,34 +1,20 @@
-# Setup AI Dev Extensions Core in Microservice - Multi-IDE Support
-# Multi-IDE support with domain selection
+# Setup AI Dev Extensions Core in Microservice
+# Creates symlinks for workflows, rules, and skills in your IDE
 #
-# Examples:
-#   .\setup-microservice.ps1                              # Auto-detect IDE, default domains
-#   .\setup-microservice.ps1 -IDE windsurf                # Specific IDE
-#   .\setup-microservice.ps1 -Domains "_core,architecture" # Specific domains
-#   .\setup-microservice.ps1 -IDE cursor -Domains "all"   # All domains to Cursor
+# USAGE:
+#   From microservice root:
+#     .\.dev-extensions\scripts\setup-microservice.ps1
 #
-# IMPORTANT NOTES:
-# 
-# 1. IDE Detection:
-#    - Auto-detection checks for .windsurf/, .cursor/, .vscode/ directories
-#    - Windsurf takes precedence over VS Code (Windsurf extends VS Code)
-#    - For IntelliJ/JetBrains IDEs: Cannot auto-detect AI plugins
-#      You must manually specify: -IDE windsurf, cursor, or vs code, by your plugin
+# EXAMPLES:
+#   .\setup-microservice.ps1                    # Auto-detect IDE, default domains
+#   .\setup-microservice.ps1 -IDE cursor        # Use specific IDE
+#   .\setup-microservice.ps1 -DryRun            # Preview changes only
 #
-# 2. Copy Mode (Flatten):
-#    - Individual workflow files are symlinked directly (e.g., architecture-intake-create.md)
-#    - Subdirectories (templates/, schemas/) are symlinked to .assets-{domain}/
-#    - Example: .windsurf/workflows/.assets-architecture/templates/
-#    - This ensures IDEs discover all workflows (required for Windsurf)
-#
-# 3. Workflow Assets:
-#    - Workflows reference assets using .assets-{domain}/{subdir}/ paths
-#    - Example: `.assets-architecture/templates/1-identity-template.md`
-#    - See config/ide-mapping.yaml for details
-#
-# 4. Manual Setup:
-#    - If this script doesn't work for your setup, see MICROSERVICE_INTEGRATION.md
-#    - Manual instructions provided for all supported IDEs
+# WHAT IT DOES:
+#   - Detects your IDE (Windsurf/Cursor/VS Code)
+#   - Creates symlinks to workflows and rules
+#   - Updates .gitignore
+#   - Loads domains (_core + architecture by default)
 
 param(
     [string]$MicroservicePath = ".",
@@ -42,7 +28,6 @@ param(
 $ErrorActionPreference = "Stop"
 
 Write-Host "AI Dev Extensions Setup" -ForegroundColor Cyan
-Write-Host "Multi-IDE support with domain selection" -ForegroundColor Gray
 Write-Host ""
 
 # Change to microservice directory
@@ -50,6 +35,16 @@ Set-Location $MicroservicePath
 $basePath = (Get-Location).Path
 Write-Host "Working in: $basePath" -ForegroundColor Yellow
 Write-Host ""
+
+# Check if .dev-extensions exists
+if (-not (Test-Path ".dev-extensions")) {
+    Write-Host "ERROR: .dev-extensions submodule not found!" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Please add the submodule first:" -ForegroundColor Yellow
+    Write-Host "  git submodule add <repo-url> .dev-extensions" -ForegroundColor Gray
+    Write-Host ""
+    exit 1
+}
 
 # Check if this is a git repository
 if (-not (Test-Path ".git")) {

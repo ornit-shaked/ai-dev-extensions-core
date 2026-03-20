@@ -17,7 +17,11 @@ domain:
   
   # What this domain provides
   provides:
-    workflows: []  # Core has no workflows
+    workflows:
+      - id: "prd-creation"
+        file: "workflows/prd-creation.md"
+        description: "Generate Product Requirements Document (PRD) for new features"
+    
     templates: []  # Core has no templates
     
     rules:
