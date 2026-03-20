@@ -28,13 +28,13 @@ Create output directory if it doesn't exist.
 
 ### Step 2: Collect Section Data
 
-For each section (1-8), execute collection logic and fill the corresponding template from `templates/`.
+For each section (1-8), execute collection logic and fill the corresponding template from `.assets-architecture/templates/`.
 
 ---
 
 ## Section 1: Identity & Boundaries
 
-**Template**: `1-identity-template.md`  
+**Template**: `.assets-architecture/templates/1-identity.md`  
 **Source**: SEMI  
 **Priority**: ESSENTIAL
 
@@ -80,7 +80,7 @@ risk: LOW
 
 ## Section 2: Architecture
 
-**Template**: `2-architecture-template.md`  
+**Template**: `.assets-architecture/templates/2-architecture.md`  
 **Source**: AUTO  
 **Priority**: ESSENTIAL
 
@@ -127,7 +127,7 @@ risk: LOW
 
 ## Section 3: Contracts & APIs
 
-**Template**: `3-contracts-template.md`  
+**Template**: `.assets-architecture/templates/3-contracts.md`  
 **Source**: SEMI  
 **Priority**: ESSENTIAL
 
@@ -187,7 +187,7 @@ risk: HIGH             # Contracts are critical
 
 ## Section 4: Data & Migrations
 
-**Template**: `4-data-template.md`  
+**Template**: `.assets-architecture/templates/4-data.md`  
 **Source**: AUTO  
 **Priority**: ESSENTIAL
 
@@ -235,7 +235,7 @@ risk: LOW
 
 ## Section 5: Key Flows
 
-**Template**: `5-flows-template.md`  
+**Template**: `.assets-architecture/templates/5-flows.md`  
 **Source**: SEMI  
 **Priority**: ESSENTIAL
 
@@ -276,7 +276,7 @@ risk: MEDIUM
 
 ## Section 6: Error Catalog
 
-**Template**: `6-errors-template.md`  
+**Template**: `.assets-architecture/templates/6-errors.md`  
 **Source**: AUTO  
 **Priority**: OPERATIONAL
 
@@ -317,7 +317,7 @@ risk: LOW
 
 ## Section 7: Configuration
 
-**Template**: `7-config-template.md`  
+**Template**: `.assets-architecture/templates/7-config.md`  
 **Source**: AUTO  
 **Priority**: ESSENTIAL
 
@@ -360,7 +360,7 @@ risk: LOW
 
 ## Section 8: Observability
 
-**Template**: `8-observability-template.md`  
+**Template**: `.assets-architecture/templates/8-observability.md`  
 **Source**: SEMI  
 **Priority**: OPERATIONAL
 
@@ -473,7 +473,7 @@ ELSE:
 
 ## Step 5: Generate Open Issues
 
-**Template**: `_open-issues-template.md`
+**Template**: `.assets-architecture/templates/_open-issues.md`
 
 ### Aggregate Issues
 
@@ -502,7 +502,7 @@ ELSE:
 ## Step 6: Write Output Files
 
 For each section:
-1. Read template from `templates/`
+1. Read template from `.assets-architecture/templates/`
 2. Replace `{{PLACEHOLDERS}}` with collected data
 3. Write to `{OUTPUT_DIR}/[section-file].md`
 
@@ -593,7 +593,7 @@ If continuing inline, proceed directly to **Step 1** of the resolve workflow usi
 - Aggregate metadata accurately in _metadata.yaml
 
 ### Template Adherence
-- Always use templates from `templates/`
+- Always use templates from `.assets-architecture/templates/`
 - Preserve template structure
 - Fill placeholders with actual data or "TBD"
 - Maintain consistent formatting

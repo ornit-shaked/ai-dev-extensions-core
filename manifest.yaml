@@ -1,5 +1,22 @@
 # AI Dev Extensions Core - Manifest
 # This file defines the extension metadata and IDE mappings
+#
+# PURPOSE:
+#   - Package-level metadata and configuration
+#   - Defines which domains are available and their load order
+#   - Specifies IDE compatibility and features
+#   - Used by setup scripts to configure microservice projects
+#
+# WHO USES IT:
+#   - Setup scripts (setup-microservice.ps1) - reads domain configuration
+#   - Package maintainers - update when adding/removing domains
+#   - Microservice developers - can override via .dev-extensions.config.yaml
+#   - IDEs - may read metadata in future for automatic discovery
+#
+# WHEN TO EDIT:
+#   - Adding a new domain → update 'domains' section
+#   - Changing IDE support → update 'compatibility' section
+#   - Package version bump → update 'version'
 
 extension:
   name: "ai-dev-extensions-core"
@@ -14,16 +31,24 @@ extension:
     url: "https://github.com/ornit-shaked/ai-dev-extensions-core"
     bitbucket: "https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-extensions-core.git"
   
+  # IDE mapping configuration
+  # See config/ide-mapping.yaml for detailed IDE-specific mappings
+  ide_config: "config/ide-mapping.yaml"
+  
   # Minimum IDE versions (when applicable)
   compatibility:
     windsurf:
       min_version: "1.0.0"
       supported: true
+      features: ["workflows", "rules", "skills"]
     cursor:
       min_version: "0.1.0"
       supported: true
-    copilot:
-      supported: false  # Future support
+      features: ["workflows", "rules"]
+    vscode:
+      supported: false  # Planned
+    intellij:
+      supported: false  # Requires plugin detection
 
 # Domain configuration
 domains:
@@ -38,47 +63,12 @@ domains:
     priority: 1
 
 # IDE-specific mappings
-# These tell each IDE where to find relevant files
-ide_mappings:
-  windsurf:
-    base_path: ".windsurf"
-    mappings:
-      workflows:
-        source: "domains/*/workflows/*.md"
-        target: "workflows/"
-        description: "Workflow definitions with frontmatter"
-      
-      templates:
-        source: "domains/*/templates/**/*"
-        target: "templates/"
-        description: "Template files for workflows"
-      
-      rules:
-        source: "rules/*.md"
-        target: "rules/"
-        description: "Windsurf-specific rules"
-      
-      skills:
-        source: "skills/*.skill.yaml"
-        target: "skills/"
-        description: "Skill definitions (future)"
-  
-  cursor:
-    base_path: ".cursor"
-    mappings:
-      rules:
-        source: "rules/*.md"
-        target: "rules/"
-        description: "Cursor rules (adapted from generic rules)"
-  
-  # Future: GitHub Copilot, Continue.dev, etc.
-  copilot:
-    base_path: ".github/copilot"
-    mappings:
-      instructions:
-        source: "rules/*.md"
-        target: "instructions/"
-        description: "Copilot instructions (future)"
+# Detailed mappings are defined in config/ide-mapping.yaml
+# The setup script reads that file to determine target directories
+# and content type mappings for each supported IDE.
+#
+# To add support for a new IDE, update config/ide-mapping.yaml
+# and the setup script will automatically handle it.
 
 # Feature flags (for future use)
 features:

@@ -1,8 +1,8 @@
-# Microservice Integration Guide
+# Setup Guide
 
 **Step-by-step guide to integrate ai-dev-extensions-core into your microservice**
 
-This guide covers multiple integration approaches, from simple to advanced.
+This guide covers multiple integration approaches, from automated setup to manual configuration.
 
 ---
 
@@ -20,47 +20,142 @@ This guide covers multiple integration approaches, from simple to advanced.
 
 **Best for**: Most projects, easy version control, automatic updates
 
-#### Step 1: Add Submodule
+#### Automated Setup
 
+**For Private Repositories:**
+```bash
+# Step 1: Add submodule (requires authentication)
+git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core .dev-extensions
+git submodule update --init --recursive
+
+# Step 2: Run setup script
+.\.dev-extensions\scripts\setup-microservice.ps1  # Windows
+bash .dev-extensions/scripts/setup-microservice.sh  # Linux/Mac
+```
+
+**The script automatically:**
+- ✅ Updates submodule to latest version
+- ✅ Auto-detects your IDE (Windsurf, Cursor, VS Code)
+- ✅ Reads domain configuration from manifest.yaml
+- ✅ Creates appropriate symlinks based on IDE mappings
+- ✅ Updates .gitignore
+- ✅ Shows summary of actions taken
+
+**Script Options:**
+
+```powershell
+# Auto-detect IDE, use default domains
+.\setup-microservice.ps1
+
+# Specify IDE explicitly
+.\setup-microservice.ps1 -IDE windsurf
+.\setup-microservice.ps1 -IDE cursor
+
+# Select specific domains
+.\setup-microservice.ps1 -Domains "_core,architecture"
+.\setup-microservice.ps1 -Domains "all"
+
+# Combine options
+.\setup-microservice.ps1 -IDE cursor -Domains "_core"
+
+# Dry run (see what would happen)
+.\setup-microservice.ps1 -DryRun
+```
+
+**Important Notes:**
+- For **IntelliJ/JetBrains IDEs**: Script cannot auto-detect AI plugins. Use `-IDE intellij` and see manual setup instructions
+- For **Windsurf**: Auto-detection checks both `.windsurf/` and `.vscode/` (Windsurf extends VS Code)
+- **Workflow assets**: Workflows may contain `templates/` subdirectory with workflow-specific files
+- **Merge strategy**: Default is "namespace" (e.g., `workflows-architecture`, `rules-core`). Use `-DirectSymlinks` for direct mode
+
+See script header comments for full details: `scripts/setup-microservice.ps1`
+
+#### Alternative: Fully Manual Setup
+
+**Important**: Run these commands from your microservice root directory (where .dev-extensions/ is located)
+
+**Linux/Mac:**
 ```bash
 # Navigate to your microservice root
 cd /path/to/your-microservice
 
-# Add ai-dev-extensions-core as a submodule
-git submodule add https://github.com/your-org/ai-dev-extensions-core .dev-extensions
-
-# Initialize and update
-git submodule update --init --recursive
-```
-
-#### Step 2: Create Symlinks for Windsurf
-
-```bash
 # Create .windsurf directory if it doesn't exist
 mkdir -p .windsurf
 
-# Link workflows (architecture domain example)
-ln -s ../.dev-extensions/domains/architecture/workflows .windsurf/workflows
+# Add architecture workflows (merge with existing)
+# Path is relative to .windsurf/ location: ../.dev-extensions means "go up one level, then into .dev-extensions"
+# Note: Workflows include embedded templates/ subdirectory
+ln -s ../.dev-extensions/domains/architecture/workflows .windsurf/workflows-architecture
 
-# Link templates
-ln -s ../.dev-extensions/domains/architecture/templates .windsurf/templates
+# Add core rules
+ln -s ../.dev-extensions/domains/_core/rules .windsurf/rules-core
 
-# Link rules
-ln -s ../.dev-extensions/rules .windsurf/rules
+# Add core skills
+ln -s ../.dev-extensions/domains/_core/skills .windsurf/skills-core
+
+# Verify symlinks
+ls -la .windsurf/
 ```
 
-**Windows (PowerShell)**:
+**Windows (PowerShell)** - Run as Administrator or enable Developer Mode:
 ```powershell
-# Create directory
+# Navigate to your microservice root
+cd C:\path\to\your-microservice
+
+# Create .windsurf directory if it doesn't exist
 New-Item -ItemType Directory -Force -Path .windsurf
 
-# Create symlinks (requires admin or developer mode)
-New-Item -ItemType SymbolicLink -Path .windsurf\workflows -Target .dev-extensions\domains\architecture\workflows
-New-Item -ItemType SymbolicLink -Path .windsurf\templates -Target .dev-extensions\domains\architecture\templates
-New-Item -ItemType SymbolicLink -Path .windsurf\rules -Target .dev-extensions\rules
+# Add architecture workflows (merge with existing)
+# Use absolute paths for Windows reliability
+# Note: Workflows include embedded templates/ subdirectory
+$basePath = (Get-Location).Path
+New-Item -ItemType SymbolicLink -Path .windsurf\workflows-architecture -Target "$basePath\.dev-extensions\domains\architecture\workflows"
+
+# Add core rules
+New-Item -ItemType SymbolicLink -Path .windsurf\rules-core -Target "$basePath\.dev-extensions\domains\_core\rules"
+
+# Add core skills
+New-Item -ItemType SymbolicLink -Path .windsurf\skills-core -Target "$basePath\.dev-extensions\domains\_core\skills"
+
+# Verify symlinks
+Get-ChildItem .windsurf\ | Select-Object Name, Target
 ```
 
-#### Step 3: Commit Changes
+**Alternative: Direct symlinks (if .windsurf/ is empty or you want to replace)**
+```powershell
+# Only if .windsurf/ is empty - create direct symlinks
+if (-not (Test-Path .windsurf\workflows)) {
+  New-Item -ItemType SymbolicLink -Path .windsurf\workflows -Target .dev-extensions\domains\architecture\workflows
+  New-Item -ItemType SymbolicLink -Path .windsurf\rules -Target .dev-extensions\domains\_core\rules
+  New-Item -ItemType SymbolicLink -Path .windsurf\skills -Target .dev-extensions\domains\_core\skills
+}
+```
+
+**✅ Benefits**:
+- All 3 content types included: workflows (with templates/), rules, skills
+- Existing content remains untouched
+- Package content added with clear naming (`-architecture`, `-core`)
+- No backup needed
+- Easy to identify package vs. project content
+
+#### Step 3: (Optional) Configure Domain Selection
+
+Create `.dev-extensions.config.yaml` in your microservice root to customize which domains are loaded:
+
+```yaml
+# .dev-extensions.config.yaml
+domains:
+  enabled:
+    - _core
+    - architecture
+    # - security  # Uncomment when available
+
+ide: windsurf  # or cursor, vscode, intellij
+```
+
+This file is optional. If not present, the script uses defaults from `manifest.yaml`.
+
+#### Step 4: Commit Changes
 
 ```bash
 git add .gitmodules .dev-extensions .windsurf
@@ -145,11 +240,17 @@ mv ai-dev-extensions-core-0.1.0 .dev-extensions
 #### Step 2: Copy Files
 
 ```bash
-mkdir -p .windsurf/workflows .windsurf/templates .windsurf/rules
+mkdir -p .windsurf/workflows .windsurf/rules .windsurf/skills
 
-cp -r .dev-extensions/domains/architecture/workflows/* .windsurf/workflows/
-cp -r .dev-extensions/domains/architecture/templates/* .windsurf/templates/
-cp -r .dev-extensions/rules/* .windsurf/rules/
+# Copy individual workflow files
+cp .dev-extensions/domains/architecture/workflows/*.md .windsurf/workflows/
+
+# Copy workflow assets directory
+cp -r .dev-extensions/domains/architecture/workflows/assets .windsurf/workflows/.assets-architecture
+
+# Copy rules and skills
+cp .dev-extensions/domains/_core/rules/*.md .windsurf/rules/
+cp .dev-extensions/domains/_core/skills/*.skill.yaml .windsurf/skills/
 ```
 
 #### Step 3: Commit
@@ -170,18 +271,15 @@ git commit -m "chore: add ai-dev-extensions workflows"
 **Architecture Only** (most common):
 ```bash
 ln -s ../.dev-extensions/domains/architecture/workflows .windsurf/workflows
-ln -s ../.dev-extensions/domains/architecture/templates .windsurf/templates
 ```
 
 **Multiple Domains**:
 ```bash
 # Architecture
 ln -s ../.dev-extensions/domains/architecture/workflows .windsurf/workflows-architecture
-ln -s ../.dev-extensions/domains/architecture/templates .windsurf/templates-architecture
 
 # Code Review
 ln -s ../.dev-extensions/domains/code-review/workflows .windsurf/workflows-code-review
-ln -s ../.dev-extensions/domains/code-review/templates .windsurf/templates-code-review
 
 # Security (opt-in)
 ln -s ../.dev-extensions/domains/security/workflows .windsurf/workflows-security
@@ -197,14 +295,16 @@ After integration, your microservice should look like:
 
 ```
 your-microservice/
-├── .dev-extensions/          # Extension package (submodule or npm)
+├── .dev-extensions/          # Extension package (submodule)
 ├── .windsurf/
-│   ├── workflows/           # Symlink to .dev-extensions/domains/.../workflows
-│   ├── templates/           # Symlink to .dev-extensions/domains/.../templates
-│   └── rules/               # Symlink to .dev-extensions/rules
+│   ├── workflows/           # Individual workflow files (flatten mode)
+│   │   ├── architecture-intake-create.md  # Symlink to package file
+│   │   ├── architecture-intake-resolve.md
+│   │   └── .assets-architecture/          # Symlink to package assets/
+│   ├── rules/              # Individual rule files
+│   └── skills/             # Individual skill files
 ├── .arch-intake/            # Generated by architecture workflows (gitignored)
 │   └── your-service-name/
-├── .code-review/            # Generated by code review workflows (gitignored)
 ├── src/                     # Your service code
 ├── .gitignore
 ├── .gitmodules              # If using submodules
@@ -224,10 +324,10 @@ Add to your `.gitignore`:
 .security/
 .auto-prompt-hub/
 
-# If using npm method, ignore symlinks
-.windsurf/workflows
-.windsurf/templates
-.windsurf/rules
+# If you copy files instead of symlinks, ignore them
+.windsurf/workflows-*/
+.windsurf/rules-*/
+.windsurf/skills-*/
 ```
 
 **Do NOT gitignore**:
@@ -243,12 +343,12 @@ After integration, verify setup:
 ### Check Symlinks
 
 ```bash
-ls -la .windsurf/
+ls -la .windsurf/workflows/
 
-# Should show:
-# workflows -> ../.dev-extensions/domains/architecture/workflows
-# templates -> ../.dev-extensions/domains/architecture/templates
-# rules -> ../.dev-extensions/rules
+# Should show (flatten mode):
+# architecture-intake-create.md -> ../../.dev-extensions/domains/architecture/workflows/architecture-intake-create.md
+# architecture-intake-resolve.md -> ../../.dev-extensions/domains/architecture/workflows/architecture-intake-resolve.md
+# .assets-architecture/ -> ../../.dev-extensions/domains/architecture/workflows/assets/
 ```
 
 ### Test in Windsurf

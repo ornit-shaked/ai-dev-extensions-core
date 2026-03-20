@@ -1,0 +1,162 @@
+# IDE Mapping Configuration
+# Defines how domains map to different IDE directory structures
+#
+# This file is the single source of truth for multi-IDE support.
+# The setup script reads this file to know where to create symlinks.
+
+version: "1.0.0"
+
+# IDE-specific mappings
+ides:
+  windsurf:
+    display_name: "Windsurf"
+    target_directory: ".windsurf"
+    supported: true
+    
+    # How each content type maps to Windsurf directories
+    mappings:
+      workflows:
+        target: "workflows"
+        description: "Workflow definitions (*.md files). May contain assets/ subdirectory."
+        
+      rules:
+        target: "rules"
+        description: "AI agent rules (*.md files). May contain assets/ subdirectory."
+        
+      skills:
+        target: "skills"
+        description: "AI agent skills (*.skill.yaml files). May contain assets/ subdirectory."
+    
+    # Documentation
+    documentation:
+      setup_url: "https://docs.windsurf.ai/extensions"
+      notes: |
+        Windsurf supports all content types.
+        Note: Windsurf is based on VS Code, so detection checks for both
+        .windsurf/ (preferred) and .vscode/ (fallback) directories.
+        Files are always placed in .windsurf/ for Windsurf-specific features.
+
+  cursor:
+    display_name: "Cursor AI"
+    target_directory: ".cursor"
+    supported: true
+    
+    mappings:
+      workflows:
+        target: "prompts"
+        description: "Prompt templates. May contain assets/ subdirectory."
+        
+      rules:
+        target: "rules"
+        description: "AI rules. May contain assets/ subdirectory."
+      
+      # Note: Cursor doesn't support skills natively
+      # skills: null
+    
+    documentation:
+      setup_url: "https://cursor.sh/docs"
+      notes: |
+        Cursor supports workflows (as prompts) and rules.
+        Skills are not supported natively.
+
+  vscode:
+    display_name: "VS Code"
+    target_directory: ".vscode"
+    supported: false  # Planned for future
+    
+    mappings:
+      workflows:
+        target: "snippets"
+        description: "Code snippets"
+        
+      rules:
+        target: "settings/ai-rules"
+        description: "AI assistant rules"
+    
+    documentation:
+      notes: |
+        VS Code support is planned but not yet implemented.
+        Note: If Windsurf is detected, it takes precedence over VS Code
+        since Windsurf extends VS Code with AI-native features.
+
+  intellij:
+    display_name: "IntelliJ IDEA (with AI plugin)"
+    target_directory: ".idea/ai-dev-extensions"
+    supported: false  # Requires plugin detection
+    
+    mappings:
+      workflows:
+        target: "prompts"
+        description: "AI prompts"
+        
+      rules:
+        target: "rules"
+        description: "AI assistant rules"
+    
+    documentation:
+      notes: |
+        IntelliJ support requires:
+        1. Detection of which AI plugin is installed (GitHub Copilot, Tabnine, etc.)
+        2. Plugin-specific configuration paths
+        3. The setup script cannot auto-detect plugins currently.
+        
+        Manual setup: Place files in .idea/ai-dev-extensions/ and configure
+        your AI plugin to read from this directory.
+
+# Domain content type definitions
+# This helps the script understand what each domain provides
+content_types:
+  workflows:
+    file_pattern: "*.md"
+    description: "Workflow definitions with YAML frontmatter"
+    
+  rules:
+    file_pattern: "*.md"
+    description: "AI agent behavioral rules"
+    
+  skills:
+    file_pattern: "*.skill.yaml"
+    description: "AI agent skill definitions"
+
+# Assets Convention
+# Any content type (workflows, rules, skills) may contain an assets/ subdirectory.
+# The setup script automatically symlinks assets/ to .assets-{domain}/ in the IDE directory.
+# Example: domains/architecture/workflows/assets/ → .windsurf/workflows/.assets-architecture/
+
+# Default behavior
+defaults:
+  ide: "windsurf"
+  
+  # Copy Mode determines how files are linked into IDE directories
+  #
+  # "flatten" (default, required for Windsurf):
+  #   Creates individual symlinks for each file (*.md, *.yaml)
+  #   Assets directory (workflows/assets/) is symlinked to .assets-{domain}/
+  #   Example:
+  #     .windsurf/workflows/architecture-intake-create.md → individual file symlink
+  #     .windsurf/workflows/.assets-architecture/ → workflows/assets/ symlink
+  #   Pros: IDE discovers all workflows (Windsurf requires workflows directly under .windsurf/workflows/)
+  #   Pros: Multiple domains coexist, assets organized per-domain
+  #   Cons: More symlinks to manage
+  #
+  # "directory" (legacy, broken in Windsurf):
+  #   Creates directory symlinks per domain
+  #   Example: .windsurf/workflows-architecture → domains/architecture/workflows/
+  #   Cons: Windsurf doesn't discover workflows in subdirectories
+  #
+  copy_mode: "flatten"
+  
+  # Asset directory pattern for flatten mode
+  # The assets/ directory under workflows/, rules/, or skills/ is symlinked to this location
+  # Pattern: .assets-{domain}/ → source workflows/assets/
+  # Example: .windsurf/workflows/.assets-architecture/ → domains/architecture/workflows/assets/
+  asset_directory_pattern: ".assets-{domain}"
+  
+# Notes for developers
+notes: |
+  To add a new IDE:
+  1. Add entry under 'ides' with target_directory and mappings
+  2. Set supported: true
+  3. Update setup scripts to handle new IDE (if needed)
+  4. Test with real microservice
+  5. Update documentation

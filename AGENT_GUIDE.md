@@ -6,6 +6,32 @@ This guide is for **AI assistants** (like Claude, GPT-4, Windsurf AI, etc.) to u
 
 ---
 
+## 📚 Navigation for Agents
+
+**Core Package Files:**
+- **[manifest.yaml](./manifest.yaml)** - Package capabilities, domains, IDE compatibility
+- **[config/ide-mapping.yaml](./config/ide-mapping.yaml)** - Deployment rules and flatten mode
+
+**Domain Configuration:**
+- **[.domain-metadata.yaml](./domains/_core/.domain-metadata.yaml)** - Domain metadata format and examples
+- **[domains/_core/](./domains/_core/)** - Shared rules and skills
+- **[domains/architecture/](./domains/architecture/)** - Architecture workflows with assets
+
+**Available Workflows:**
+- **[architecture-intake-create.md](./domains/architecture/workflows/architecture-intake-create.md)** - Create architecture documentation
+- **[architecture-intake-resolve.md](./domains/architecture/workflows/architecture-intake-resolve.md)** - Resolve architecture issues
+
+**Human Documentation (update when making changes):**
+- **[README.md](./README.md)** - Main entry point with navigation
+- **[SETUP.md](./SETUP.md)** - Integration guide
+- **[CHANGELOG.md](./CHANGELOG.md)** - Version history
+
+**Specialized Guides (context-efficient):**
+- **[domains/agent.md](./domains/agent.md)** - Creating new domains (detailed guide)
+- **[examples/agent.md](./examples/agent.md)** - Creating example outputs (detailed guide)
+
+---
+
 ## 🤖 For AI Agents: What is This Package?
 
 You are reading documentation for **ai-dev-extensions-core**, a structured collection of:
@@ -21,19 +47,53 @@ This content helps you perform tasks more accurately and consistently across dif
 ## 📚 Package Structure
 
 ```
-ai-dev-extensions-core/
-├── manifest.yaml        # Package metadata and IDE mappings
-├── domains/             # Task-specific content organized by domain
-│   ├── _core/          # Shared rules, skills, utilities (priority 0)
-│   │   ├── rules/     # Behavioral constraints for agents
-│   │   └── skills/    # Reusable capabilities
-│   └── architecture/   # Architecture documentation domain
-│       ├── workflows/ # Architecture intake workflows
-│       └── templates/ # Architecture templates
-├── examples/           # Example workflow outputs
-│   └── architecture/  # Architecture domain examples
-└── docs/               # Additional documentation
+workflows/
+├── architecture-intake-create.md    # Individual file symlinks
+├── architecture-intake-resolve.md
+└── .assets-architecture/            # Symlinked from source assets/
+    └── templates/                   # Workflow assets
 ```
+
+### IDE Mappings
+
+Each IDE has different directory conventions:
+- **Windsurf**: `.windsurf/workflows/`, `.windsurf/rules/`, `.windsurf/skills/`
+- **Cursor**: `.cursor/prompts/`, `.cursor/rules/`
+- **VS Code**: `.vscode/snippets/` (planned)
+
+**Flatten Mode (default):**
+- Individual workflow files are symlinked directly: `workflows/architecture-intake-create.md`
+- Subdirectories (templates, schemas) are symlinked to `.assets-{domain}/`
+- This ensures IDEs discover all workflows (required for Windsurf)
+
+Content types map to IDE directories:
+- `workflows/*.md` → Individual file symlinks in IDE workflow directory
+- `workflows/templates/` → `.assets-{domain}/templates/` in IDE directory
+- `rules/*.md` → Individual file symlinks in IDE rules directory
+- `skills/*.skill.yaml` → Individual file symlinks in IDE skills directory for workflow-specific assets
+- **Rules**: `.md` files with behavioral constraints
+- **Skills**: `.skill.yaml` files with capability definitions
+
+**How it works:**
+1. Setup script reads `config/ide-mapping.yaml`
+2. Detects which IDE is in use (or user specifies)
+3. Creates symlinks to appropriate directories with correct naming
+4. Each IDE may have different content type support
+
+**For manual integration**, refer to `config/ide-mapping.yaml` to see:
+- Target directories per IDE
+- Content type mappings (e.g., workflows → prompts in Cursor)
+- Feature support matrix
+
+### IDE Mapping Explanation
+
+The IDE mapping feature allows agents to integrate with various Integrated Development Environments (IDEs) seamlessly. Here's a breakdown of how it works:
+
+*   **IDE Detection**: The setup script automatically detects the IDE in use or allows the user to specify it manually.
+*   **Directory Mapping**: Based on the detected IDE, the script creates symlinks to the corresponding directories with the correct naming conventions.
+*   **Content Type Support**: Each IDE may have different content type support, which is defined in the `config/ide-mapping.yaml` file.
+
+By using the IDE mapping feature, agents can easily integrate with different IDEs and access the necessary files and directories.
 
 ---
 

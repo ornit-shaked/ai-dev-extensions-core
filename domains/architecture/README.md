@@ -428,17 +428,17 @@ domains/architecture/
 ├── workflows/
 │   ├── architecture-intake-create.md
 │   └── architecture-intake-resolve.md
-├── templates/
-│   ├── 1-identity-template.md
-│   ├── 2-architecture-template.md
-│   ├── 3-contracts-template.md
-│   ├── 4-data-template.md
-│   ├── 5-flows-template.md
-│   ├── 6-errors-template.md
-│   ├── 7-config-template.md
-│   ├── 8-observability-template.md
-│   ├── _metadata-template.yaml
-│   └── _open-issues-template.md
+├── assets/
+│   ├── 1-identity.md
+│   ├── 2-architecture.md
+│   ├── 3-contracts.md
+│   ├── 4-data.md
+│   ├── 5-flows.md
+│   ├── 6-errors.md
+│   ├── 7-config.md
+│   ├── 8-observability.md
+│   ├── _metadata.yaml
+│   └── _open-issues.md
 ├── .domain-metadata.yaml
 └── README.md (this file)
 ```
