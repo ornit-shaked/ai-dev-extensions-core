@@ -1,4 +1,4 @@
-# Setup AI Dev Extensions Core in Microservice
+# Setup AI Dev Extensions Core in any project (ms, lib, any language)
 # Creates symlinks for workflows, rules, and skills in your IDE
 #
 # USAGE:
@@ -159,7 +159,7 @@ function Get-IDEMapping {
     )
     
     if (-not (Test-Path $MappingFile)) {
-        Write-Host "⚠ IDE mapping file not found: $MappingFile" -ForegroundColor Yellow
+        Write-Host "[WARNING] IDE mapping file not found: $MappingFile" -ForegroundColor Yellow
         Write-Host "  Using fallback mappings" -ForegroundColor Gray
         return @{
             target_directory = ".windsurf"
@@ -216,13 +216,13 @@ function Get-IDEMapping {
 Write-Host "Step 1: Checking for .dev-extensions..." -ForegroundColor Cyan
 
 if (-not (Test-Path ".dev-extensions")) {
-    Write-Host "✗ .dev-extensions not found" -ForegroundColor Red
+    Write-Host "[ERROR] .dev-extensions not found" -ForegroundColor Red
     Write-Host "  Please add the submodule first:" -ForegroundColor Yellow
     Write-Host "  git submodule add <repo-url> .dev-extensions" -ForegroundColor Gray
     exit 1
 }
 
-Write-Host "✓ .dev-extensions exists" -ForegroundColor Green
+Write-Host "[OK] .dev-extensions exists" -ForegroundColor Green
 
 # Step 2: Detect or validate IDE
 Write-Host ""
@@ -234,19 +234,19 @@ if ($IDE -eq "auto") {
     # Auto-detect IDE
     if (Test-Path ".windsurf") {
         $detectedIDE = "windsurf"
-        Write-Host "✓ Detected Windsurf" -ForegroundColor Green
+        Write-Host "[OK] Detected Windsurf" -ForegroundColor Green
     } elseif (Test-Path ".cursor") {
         $detectedIDE = "cursor"
-        Write-Host "✓ Detected Cursor" -ForegroundColor Green
+        Write-Host "[OK] Detected Cursor" -ForegroundColor Green
     } elseif (Test-Path ".vscode") {
         $detectedIDE = "windsurf"  # Default to Windsurf for VS Code
-        Write-Host "✓ Detected VS Code - using Windsurf configuration" -ForegroundColor Green
+        Write-Host "[OK] Detected VS Code - using Windsurf configuration" -ForegroundColor Green
     } else {
         $detectedIDE = "windsurf"
-        Write-Host "⚠ No IDE detected - defaulting to Windsurf" -ForegroundColor Yellow
+        Write-Host "[WARNING] No IDE detected - defaulting to Windsurf" -ForegroundColor Yellow
     }
 } else {
-    Write-Host "✓ Using specified IDE: $detectedIDE" -ForegroundColor Green
+    Write-Host "[OK] Using specified IDE: $detectedIDE" -ForegroundColor Green
 }
 
 # Step 3: Get enabled domains
@@ -258,7 +258,7 @@ $configPath = $ConfigFile
 
 $enabledDomains = Get-EnabledDomains -DomainsParam $Domains -ConfigPath $configPath -ManifestPath $manifestPath
 
-Write-Host "✓ Enabled domains: $($enabledDomains -join ', ')" -ForegroundColor Green
+Write-Host "[OK] Enabled domains: $($enabledDomains -join ', ')" -ForegroundColor Green
 
 # Step 4: Load IDE mappings
 Write-Host ""
@@ -267,7 +267,7 @@ Write-Host "Step 4: Loading IDE mappings..." -ForegroundColor Cyan
 $mappingFile = ".dev-extensions/config/ide-mapping.yaml"
 $ideMapping = Get-IDEMapping -IDE $detectedIDE -MappingFile $mappingFile
 
-Write-Host "✓ Target directory: $($ideMapping.target_directory)" -ForegroundColor Green
+Write-Host "[OK] Target directory: $($ideMapping.target_directory)" -ForegroundColor Green
 Write-Host "  workflows → $($ideMapping.workflows)" -ForegroundColor Gray
 Write-Host "  rules → $($ideMapping.rules)" -ForegroundColor Gray
 Write-Host "  skills → $($ideMapping.skills)" -ForegroundColor Gray
@@ -281,9 +281,9 @@ if (-not (Test-Path $ideDir)) {
     if (-not $DryRun) {
         New-Item -ItemType Directory -Path $ideDir | Out-Null
     }
-    Write-Host "✓ Created $ideDir" -ForegroundColor Green
+    Write-Host "[OK] Created $ideDir" -ForegroundColor Green
 } else {
-    Write-Host "✓ $ideDir exists" -ForegroundColor Green
+    Write-Host "[OK] $ideDir exists" -ForegroundColor Green
 }
 
 # Step 5: Create symlinks (flatten mode)
@@ -294,7 +294,7 @@ foreach ($domain in $enabledDomains) {
     $domainPath = ".dev-extensions\domains\$domain"
     
     if (-not (Test-Path $domainPath)) {
-        Write-Host "  ⚠ Domain '$domain' not found - skipping" -ForegroundColor Yellow
+        Write-Host "  [WARNING] Domain '$domain' not found - skipping" -ForegroundColor Yellow
         continue
     }
     
@@ -371,9 +371,9 @@ if ($needsUpdate) {
     if (-not $DryRun) {
         Add-Content -Path $gitignorePath -Value $gitignoreContent
     }
-    Write-Host "✓ Updated .gitignore" -ForegroundColor Green
+    Write-Host "[OK] Updated .gitignore" -ForegroundColor Green
 } else {
-    Write-Host "✓ .gitignore already configured" -ForegroundColor Green
+    Write-Host "[OK] .gitignore already configured" -ForegroundColor Green
 }
 
 # Helper function for creating symlinks
@@ -386,12 +386,12 @@ function New-SafeSymlink {
     )
     
     if (Test-Path $LinkPath) {
-        Write-Host "  ⚠ $Description already exists - skipping" -ForegroundColor Yellow
+        Write-Host "  [SKIP] $Description already exists" -ForegroundColor Yellow
         return
     }
     
     if (-not (Test-Path $TargetPath)) {
-        Write-Host "  ⚠ Target not found: $TargetPath - skipping" -ForegroundColor Yellow
+        Write-Host "  [WARNING] Target not found: $TargetPath" -ForegroundColor Yellow
         return
     }
     
@@ -402,9 +402,9 @@ function New-SafeSymlink {
     
     try {
         New-Item -ItemType SymbolicLink -Path $LinkPath -Target $TargetPath -ErrorAction Stop | Out-Null
-        Write-Host "  ✓ Created $Description" -ForegroundColor Green
+        Write-Host "  [OK] Created $Description" -ForegroundColor Green
     } catch {
-        Write-Host "  ✗ Failed to create $Description" -ForegroundColor Red
+        Write-Host "  [ERROR] Failed to create $Description" -ForegroundColor Red
         Write-Host "    Try running PowerShell as Administrator" -ForegroundColor Yellow
     }
 }
