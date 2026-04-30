@@ -62,32 +62,24 @@ This file aggregates all items flagged with `needs-human: true` during the archi
 
 ### Observability
 
-- [ ] **Dashboard links missing** (Section: 8-observability.md)
+- [ ] **Dashboard links missing** 
   - **Issue**: No Grafana/Kibana dashboard links found
   - **Action Required**: Add links to monitoring dashboards
   - **Impact**: Slows down troubleshooting and incident response
   - **Assigned To**: {{SRE|DEVOPS}}
   - **Example**: `https://grafana.company.com/d/tosca-engine-ms`
 
-- [ ] **Alert configuration verification** (Section: 8-observability.md)
+- [ ] **Alert configuration verification** 
   - **Issue**: Alert rules need verification
   - **Action Required**: Confirm alert thresholds and channels
   - **Impact**: May miss critical incidents or get false alarms
   - **Assigned To**: {{SRE|DEVOPS}}
 
-- [ ] **Tracing configuration** (Section: 8-observability.md)
+- [ ] **Tracing configuration** 
   - **Issue**: Distributed tracing setup needs verification
   - **Action Required**: Confirm tracing backend and sampling rate
   - **Impact**: Affects debugging distributed transactions
   - **Assigned To**: {{SRE|DEVOPS}}
-
-### Data & Migrations
-
-- [ ] **Migration policy documentation** (Section: 4-data.md)
-  - **Issue**: Migration approach partially documented
-  - **Action Required**: Document rollback strategy and testing requirements
-  - **Impact**: Risk of failed migrations in production
-  - **Assigned To**: {{DATABASE_ADMIN|BACKEND_DEVELOPER}}
 
 ---
 
@@ -125,7 +117,7 @@ This file aggregates all items flagged with `needs-human: true` during the archi
 
 ### Performance Baselines
 
-- [ ] **Performance benchmarks** (Section: 8-observability.md)
+- [ ] **Performance benchmarks** 
   - **Issue**: No documented performance baselines
   - **Action Required**: Run load tests and document expected performance
   - **Impact**: Helps detect performance regressions
@@ -133,7 +125,7 @@ This file aggregates all items flagged with `needs-human: true` during the archi
 
 ### Testing
 
-- [ ] **Integration test documentation** (Section: 7-config.md)
+- [ ] **Integration test documentation** 
   - **Issue**: Integration test setup could be more detailed
   - **Action Required**: Document integration test scenarios and data setup
   - **Impact**: Easier onboarding for new developers

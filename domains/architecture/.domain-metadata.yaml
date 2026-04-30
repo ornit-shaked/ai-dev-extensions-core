@@ -26,9 +26,9 @@ domain:
         file: "workflows/architecture-intake-resolve.md"
         description: "Resolve open issues from architecture intake"
     
-    templates:
+    assets:
       - id: "arch-intake-templates"
-        path: "templates/"
+        path: "assets/"
         description: "Templates for architecture documentation sections"
     
     rules: []
@@ -93,24 +93,6 @@ domain:
           - "Checking external integrations"
           - "Fixing integration issues"
       
-      - id: "4-data"
-        name: "Data Layer"
-        file: "4-data.md"
-        priority: "ESSENTIAL"
-        typical_source: "AUTO"
-        description: "Data model and persistence"
-        contains:
-          - "Database type and configuration"
-          - "Entities and collections"
-          - "Migrations (Flyway/Liquibase)"
-          - "Data invariants and constraints"
-          - "Repository methods"
-        use_when:
-          - "Understanding data model"
-          - "Making database changes"
-          - "Adding new entities"
-          - "Reviewing data integrity"
-      
       - id: "5-flows"
         name: "Key Flows"
         file: "5-flows.md"
@@ -129,60 +111,6 @@ domain:
           - "Debugging flow issues"
           - "Adding new features"
       
-      - id: "6-errors"
-        name: "Error Handling"
-        file: "6-errors.md"
-        priority: "OPERATIONAL"
-        typical_source: "AUTO"
-        description: "Exception handling and error catalog"
-        contains:
-          - "Custom exception hierarchy"
-          - "Error codes and meanings"
-          - "HTTP status mappings"
-          - "Recovery strategies"
-          - "Logging patterns"
-        use_when:
-          - "Implementing error handling"
-          - "Debugging errors"
-          - "Adding new exceptions"
-          - "Standardizing error responses"
-      
-      - id: "7-config"
-        name: "Configuration"
-        file: "7-config.md"
-        priority: "ESSENTIAL"
-        typical_source: "AUTO"
-        description: "Configuration and local development"
-        contains:
-          - "Configuration file locations"
-          - "Key parameters and defaults"
-          - "Environment variables"
-          - "Profiles (dev, k8s, prod)"
-          - "Local setup instructions"
-        use_when:
-          - "Setting up local environment"
-          - "Understanding configuration"
-          - "Adding new config parameters"
-          - "Troubleshooting env issues"
-      
-      - id: "8-observability"
-        name: "Observability"
-        file: "8-observability.md"
-        priority: "OPERATIONAL"
-        typical_source: "SEMI"
-        description: "Logging, metrics, monitoring"
-        contains:
-          - "Logging framework and levels"
-          - "Metrics endpoints"
-          - "Health checks"
-          - "Dashboard links (may need human)"
-          - "Runbooks and alerts"
-        use_when:
-          - "Adding logging or metrics"
-          - "Troubleshooting in production"
-          - "Creating alerts"
-          - "Reviewing operational health"
-    
     metadata_files:
       - id: "_metadata"
         file: "_metadata.yaml"
@@ -222,8 +150,8 @@ domain:
   
   # Documentation
   documentation:
-    guide: "../../docs/domains/architecture.md"
-    examples: "../../examples/architecture/"
+    guide: "/README.md"
+    # examples: "../../examples/architecture/"
   
   # Metadata
   created: "2026-03-19"

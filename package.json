@@ -1,7 +1,7 @@
 {
   "name": "@your-org/ai-dev-extensions-core",
   "version": "0.1.0",
-  "description": "Reusable AI development workflows, templates, and rules for multiple IDEs",
+  "description": "Reusable AI development workflows, skills, and rules for multiple IDEs",
   "keywords": [
     "ai",
     "windsurf",
@@ -13,7 +13,7 @@
     "architecture",
     "code-review"
   ],
-  "author": "Your Organization",
+  "author": "Ornit Shaked",
   "license": "MIT",
   "repository": {
     "type": "git",

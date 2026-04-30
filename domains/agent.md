@@ -18,7 +18,7 @@ Before starting, confirm with user:
 1. **Domain name** (e.g., "security", "code-review")
 2. **Domain purpose** (what workflows/rules will it contain)
 3. **At least one workflow** ready or planned
-4. **Priority level** (0-10, lower = loads first, higher = loads later)
+4. **Priority level** (1-10, lower = loads first, higher = loads later)
 
 ---
 
@@ -40,19 +40,24 @@ Which types of content will this domain include?
 domains/{domain-name}/
 ├── workflows/              # Workflow definitions
 │   └── assets/            # (Optional) Workflow assets (templates, schemas, etc.)
+│       ├── workflow-a/    # Assets for specific workflow
+│       └── workflow-b/    # Assets for specific workflow
 ├── rules/                  # (Optional) Domain-specific rules
+│   └── assets/            # (Optional) Rule assets
 ├── skills/                 # (Optional) Domain-specific skills
+│   └── assets/            # (Optional) Skill assets
 ├── .domain-metadata.yaml   # Required
-└── README.md              # Recommended
+└── README.md              # Required
 ```
 
 **Windsurf IDE mapping (flatten mode)**:
 - `workflows/*.md` → `.windsurf/workflows/{filename}.md` (individual file symlinks)
 - `workflows/assets/` → `.windsurf/workflows/.assets-{domain}/` (directory symlink)
+  - Per-workflow subdirectories: `.assets-{domain}/workflow-name/`
 - `rules/*.md` → `.windsurf/rules/{filename}.md` (individual file symlinks)
-- `skills/*.skill.yaml` → `.windsurf/skills/{filename}.skill.yaml` (individual file symlinks)
+- `skills/*.md` → `.windsurf/skills/{filename}.md` (individual file symlinks)
 
-**Important**: Workflows reference assets using `.assets-{domain}/` paths
+**Important**: Workflows reference assets using `.assets-{domain}/{workflow-name}/` paths
 
 ---
 

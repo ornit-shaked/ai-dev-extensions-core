@@ -28,13 +28,13 @@ Create output directory if it doesn't exist.
 
 ### Step 2: Collect Section Data
 
-For each section (1-8), execute collection logic and fill the corresponding template from `.assets-architecture/templates/`.
+For each section (1, 2, 3, 5), execute collection logic and fill the corresponding template from `.assets-architecture/intake-create/`.
 
 ---
 
 ## Section 1: Identity & Boundaries
 
-**Template**: `.assets-architecture/templates/1-identity.md`  
+**Template**: `.assets-architecture/intake-create/1-identity.md`  
 **Source**: SEMI  
 **Priority**: ESSENTIAL
 
@@ -80,7 +80,7 @@ risk: LOW
 
 ## Section 2: Architecture
 
-**Template**: `.assets-architecture/templates/2-architecture.md`  
+**Template**: `.assets-architecture/intake-create/2-architecture.md`  
 **Source**: AUTO  
 **Priority**: ESSENTIAL
 
@@ -127,7 +127,7 @@ risk: LOW
 
 ## Section 3: Contracts & APIs
 
-**Template**: `.assets-architecture/templates/3-contracts.md`  
+**Template**: `.assets-architecture/intake-create/3-contracts.md`  
 **Source**: SEMI  
 **Priority**: ESSENTIAL
 
@@ -185,57 +185,9 @@ risk: HIGH             # Contracts are critical
 
 ---
 
-## Section 4: Data & Migrations
-
-**Template**: `.assets-architecture/templates/4-data.md`  
-**Source**: AUTO  
-**Priority**: ESSENTIAL
-
-### Collection Steps
-
-1. **Database Configuration**
-   - Extract from `application.yaml`:
-     - Database type (MongoDB/PostgreSQL/MySQL)
-     - Database name
-     - Host/port
-   - Check for Redis, Elasticsearch configs
-
-2. **Domain Entities**
-   - Find `@Entity` (JPA), `@Document` (MongoDB), or domain model classes
-   - List entity names, collection/table names
-   - Extract key fields from main entities
-   - Document indexes (`@Indexed`, `@Index`)
-
-3. **Migrations**
-   - Check for:
-     - `config/migration/*.yaml` → Custom MongoDB migrations
-     - `src/main/resources/db/migration/` → Flyway
-     - `src/main/resources/db/changelog/` → Liquibase
-   - List recent migration files
-   - Document migration execution strategy
-
-4. **Data Invariants**
-   - Find validation annotations: `@NotNull`, `@Size`, `@Pattern`, `@Valid`
-   - Document unique constraints
-   - Extract business rules from comments/javadoc
-
-5. **Repository Layer**
-   - Find `@Repository` interfaces
-   - List key query methods
-
-### Output Metadata
-```yaml
-source: AUTO
-completeness: COMPLETE
-needs-human: false
-risk: LOW
-```
-
----
-
 ## Section 5: Key Flows
 
-**Template**: `.assets-architecture/templates/5-flows.md`  
+**Template**: `.assets-architecture/intake-create/5-flows.md`  
 **Source**: SEMI  
 **Priority**: ESSENTIAL
 
@@ -274,172 +226,7 @@ risk: MEDIUM
 
 ---
 
-## Section 6: Error Catalog
-
-**Template**: `.assets-architecture/templates/6-errors.md`  
-**Source**: AUTO  
-**Priority**: OPERATIONAL
-
-### Collection Steps
-
-1. **Custom Exceptions**
-   - Find all classes extending `Exception` or `RuntimeException`
-   - Build exception hierarchy tree
-   - Group by category (Validation, NotFound, Business, Infrastructure)
-
-2. **Error Codes**
-   - Search for error code constants or enums
-   - Map error codes to exception classes
-
-3. **Exception Handlers**
-   - Find `@ControllerAdvice` or `@ExceptionHandler` classes
-   - Extract exception → HTTP status mappings
-   - Document error response format
-
-4. **Error Catalog Table**
-   - For each exception:
-     - Error code
-     - Exception class
-     - HTTP status
-     - Trigger condition
-     - Message format
-     - Recovery action
-
-### Output Metadata
-```yaml
-source: AUTO
-completeness: COMPLETE
-needs-human: false
-risk: LOW
-```
-
----
-
-## Section 7: Configuration
-
-**Template**: `.assets-architecture/templates/7-config.md`  
-**Source**: AUTO  
-**Priority**: ESSENTIAL
-
-### Collection Steps
-
-1. **Configuration Files**
-   - List all `application*.yaml` and `application*.properties` files
-   - Check `ms-config/application.env`
-   - Find `bootstrap.yml` if exists
-
-2. **Configuration Keys**
-   - Parse `application.yaml` and extract all keys
-   - Categorize: Server, Database, Message Broker, Service-specific
-   - Document default values, required status
-   - Note profile-specific overrides
-
-3. **Environment Variables**
-   - Find references to `${VAR_NAME}` in config files
-   - List required vs optional variables
-
-4. **Profiles**
-   - Document `dev`, `k8s`, `prod` profiles
-   - Explain differences between profiles
-
-5. **Local Development Setup**
-   - Document prerequisites (Java version, databases)
-   - Provide Docker commands for infrastructure
-   - Show how to run the application locally
-   - Include test execution commands
-
-### Output Metadata
-```yaml
-source: AUTO
-completeness: COMPLETE
-needs-human: false
-risk: LOW
-```
-
----
-
-## Section 8: Observability
-
-**Template**: `.assets-architecture/templates/8-observability.md`  
-**Source**: SEMI  
-**Priority**: OPERATIONAL
-
-### Collection Steps
-
-1. **Logging**
-   - Find logging config: `log4j2.xml`, `logback.xml`
-   - Extract log levels from `application.yaml`
-   - Search for key log statements in code
-
-2. **Metrics**
-   - Check for `/actuator/prometheus` or `/actuator/metrics`
-   - Find `@Timed`, `@Counted` annotations
-   - Document custom metrics if found
-
-3. **Health Checks**
-   - Document `/actuator/health` endpoints
-   - List health indicators (database, message broker, disk)
-   - Extract Kubernetes probe configuration from `chart/`
-
-4. **Tracing**
-   - Check for Spring Cloud Sleuth or OpenTelemetry dependencies
-   - Document if tracing is enabled
-
-5. **Dashboards**
-   - Search README for Grafana/Kibana links
-   - Mark as `needs-human: true` if not found
-
-6. **Alerting**
-   - Document if alert configuration found
-   - Mark as `needs-human: true` for verification
-
-7. **Runbooks**
-   - Provide common operations (restart, check logs, check health)
-   - Document troubleshooting steps
-
-### Output Metadata
-```yaml
-source: SEMI
-completeness: PARTIAL  # Dashboard links need human input
-needs-human: true
-risk: MEDIUM
-```
-
----
-
-## Step 3: Auto-Detect Optional Sections
-
-### Security Section (9-security.md)
-
-**Auto-detect logic**:
-```
-IF (Spring Security dependency in build.gradle)
-   OR (@PreAuthorize/@Secured annotations found)
-   OR (OAuth2/JWT configuration in application.yaml)
-THEN
-   Include security section in _metadata.yaml
-   Note: "Security features detected - consider full documentation"
-ELSE
-   Skip security section
-   Note in _metadata.yaml: "Not applicable - backend service"
-```
-
-### ADRs Section (10-adrs.md)
-
-**Auto-detect logic**:
-```
-Search for: docs/adr/, docs/decisions/, architecture/
-IF found:
-   Note location in _metadata.yaml
-   List ADR files
-ELSE:
-   Note in _metadata.yaml: "MISSING - suggest creating docs/adr/"
-   Provide template link
-```
-
----
-
-## Step 4: Generate Metadata Summary
+## Step 3: Generate Metadata Summary
 
 **Template**: `_metadata-template.yaml`
 
@@ -459,7 +246,7 @@ ELSE:
    - Provide recommendation if missing
 
 4. **Overall Statistics**
-   - Total sections: 8
+   - Total sections: 4
    - Complete: X
    - Partial: Y
    - Missing: Z
@@ -471,9 +258,9 @@ ELSE:
 
 ---
 
-## Step 5: Generate Open Issues
+## Step 4: Generate Open Issues
 
-**Template**: `.assets-architecture/templates/_open-issues.md`
+**Template**: `.assets-architecture/intake-create/_open-issues-template.md`
 
 ### Aggregate Issues
 
@@ -502,7 +289,7 @@ ELSE:
 ## Step 6: Write Output Files
 
 For each section:
-1. Read template from `.assets-architecture/templates/`
+1. Read template from `.assets-architecture/intake-create/`
 2. Replace `{{PLACEHOLDERS}}` with collected data
 3. Write to `{OUTPUT_DIR}/[section-file].md`
 
@@ -523,15 +310,11 @@ Display to user:
   ✓ 1-identity.md          [{SECTION_1_STATUS}]
   ✓ 2-architecture.md      [{SECTION_2_STATUS}]
   ✓ 3-contracts.md         [{SECTION_3_STATUS}]
-  ✓ 4-data.md              [{SECTION_4_STATUS}]
   ✓ 5-flows.md             [{SECTION_5_STATUS}]
-  ✓ 6-errors.md            [{SECTION_6_STATUS}]
-  ✓ 7-config.md            [{SECTION_7_STATUS}]
-  ✓ 8-observability.md     [{SECTION_8_STATUS}]
   ✓ _metadata.yaml         [Summary]
   ✓ _open-issues.md        [{OPEN_ISSUES_COUNT} items need attention]
 
-📊 Completeness: {COMPLETE_COUNT}/8 sections complete, {PARTIAL_COUNT} partial
+📊 Completeness: {COMPLETE_COUNT}/4 sections complete, {PARTIAL_COUNT} partial
 
 🤖 Agent Ready: {AGENT_READY_STATUS}
    Essential sections complete. Agents can use with caution.
@@ -593,7 +376,7 @@ If continuing inline, proceed directly to **Step 1** of the resolve workflow usi
 - Aggregate metadata accurately in _metadata.yaml
 
 ### Template Adherence
-- Always use templates from `.assets-architecture/templates/`
+- Always use templates from `.assets-architecture/intake-create/`
 - Preserve template structure
 - Fill placeholders with actual data or "TBD"
 - Maintain consistent formatting

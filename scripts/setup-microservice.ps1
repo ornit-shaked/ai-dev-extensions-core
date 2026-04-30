@@ -113,7 +113,7 @@ function Get-EnabledDomains {
     param(
         [string]$DomainsParam,
         [string]$ConfigPath,
-        [string]$ManifestPath
+        [string]$DomainMappingPath
     )
     
     # Priority 1: Command line parameter
@@ -309,18 +309,19 @@ Write-Host "[OK] Using IDE: $detectedIDE" -ForegroundColor Green
 
 # Step 3: Get enabled domains
 Write-Host ""
-Write-Host "Step 3: Determining enabled domains..." -ForegroundColor Cyan
+Write-Host "Step 3: Determining enabled domains..."
 
-$manifestPath = ".dev-extensions/manifest.yaml"
+$domainMappingPath = ".dev-extensions/config/domain-mapping.yaml"
 $configPath = $ConfigFile
 
-$enabledDomains = Get-EnabledDomains -DomainsParam $Domains -ConfigPath $configPath -ManifestPath $manifestPath
+$enabledDomains = Get-EnabledDomains -DomainsParam $Domains -ConfigPath $configPath -DomainMappingPath $domainMappingPath
 
 Write-Host "[OK] Enabled domains: $($enabledDomains -join ', ')" -ForegroundColor Green
+Write-Host "  (Read from config/domain-mapping.yaml)" -ForegroundColor Gray
 
 # Step 4: Load IDE mappings
 Write-Host ""
-Write-Host "Step 4: Loading IDE mappings..." -ForegroundColor Cyan
+Write-Host "Step 4: Loading IDE mappings..."
 
 $mappingFile = ".dev-extensions/config/ide-mapping.yaml"
 $ideMapping = Get-IDEMapping -IDE $detectedIDE -MappingFile $mappingFile
@@ -328,6 +329,7 @@ $ideMapping = Get-IDEMapping -IDE $detectedIDE -MappingFile $mappingFile
 Write-Host "[OK] Target directory: $($ideMapping.target_directory)" -ForegroundColor Green
 Write-Host "  workflows → $($ideMapping.workflows)" -ForegroundColor Gray
 Write-Host "  rules → $($ideMapping.rules)" -ForegroundColor Gray
+Write-Host "  (Read from config/ide-mapping.yaml)" -ForegroundColor Gray
 Write-Host "  skills → $($ideMapping.skills)" -ForegroundColor Gray
 
 # Step 5: Create IDE directory if needed

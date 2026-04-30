@@ -72,18 +72,27 @@ echo "[OK] Using IDE: $IDE"
 echo ""
 echo "Step 3: Determining enabled domains..."
 
-MANIFEST_PATH=".dev-extensions/manifest.yaml"
+DOMAIN_MAPPING_PATH=".dev-extensions/config/domain-mapping.yaml"
 ENABLED_DOMAINS=()
 
-# Read default domains from manifest
-if [ -f "$MANIFEST_PATH" ]; then
+# Read default domains from domain mapping
+if [ -f "$DOMAIN_MAPPING_PATH" ]; then
     while IFS= read -r line; do
-        if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*(.+)$ ]]; then
-            domain="${BASH_REMATCH[1]}"
-            domain=$(echo "$domain" | tr -d '"' | tr -d "'")
-            ENABLED_DOMAINS+=("$domain")
+        if [[ "$line" =~ ^[[:space:]]*enabled_by_default:[[:space:]]*true ]]; then
+            # Get the domain name from the previous lines
+            domain_name=""
+            while IFS= read -r prev_line; do
+                if [[ "$prev_line" =~ ^[[:space:]]*([a-z_]+):[[:space:]]*$ ]]; then
+                    domain_name="${BASH_REMATCH[1]}"
+                    break
+                fi
+            done < <(grep -B5 "$line" "$DOMAIN_MAPPING_PATH")
+            
+            if [ -n "$domain_name" ]; then
+                ENABLED_DOMAINS+=("$domain_name")
+            fi
         fi
-    done < <(sed -n '/^enabled_domains:/,/^[^ ]/p' "$MANIFEST_PATH" | grep '  -')
+    done < "$DOMAIN_MAPPING_PATH"
 fi
 
 if [ ${#ENABLED_DOMAINS[@]} -eq 0 ]; then
@@ -91,6 +100,7 @@ if [ ${#ENABLED_DOMAINS[@]} -eq 0 ]; then
 fi
 
 echo "[OK] Enabled domains: ${ENABLED_DOMAINS[*]}"
+echo "  (Read from config/domain-mapping.yaml)"
 
 # Step 4: Load IDE mapping
 echo ""
@@ -136,6 +146,7 @@ echo "[OK] Target directory: $TARGET_DIR"
 echo "  workflows → $WORKFLOWS_DIR"
 echo "  rules → $RULES_DIR"
 echo "  skills → $SKILLS_DIR"
+echo "  (Read from config/ide-mapping.yaml)"
 
 # Step 5: Create IDE directory
 echo ""
@@ -221,26 +232,34 @@ for domain in "${ENABLED_DOMAINS[@]}"; do
             [ -e "$file" ] || continue
             filename=$(basename "$file")
             link_path="$target_dir/$filename"
-            desc="$filename ($domain)"
+            desc="$filename from $domain/"
+            
             create_safe_link "$link_path" "$file" "$desc"
         done
         
-        # Handle assets/ directory
-        assets_path="$source_path/assets"
-        if [ -d "$assets_path" ]; then
-            asset_link_path="$target_dir/.assets-$domain"
-            desc=".assets-$domain/"
-            create_safe_link "$asset_link_path" "$assets_path" "$desc"
+        # Handle assets/ directory if it exists
+        if [ -d "$source_path/assets" ]; then
+            assets_target_dir="$TARGET_DIR/.assets-$domain"
+            mkdir -p "$assets_target_dir"
+            
+            for file in "$source_path/assets"/*; do
+                [ -e "$file" ] || continue
+                filename=$(basename "$file")
+                link_path="$assets_target_dir/$filename"
+                desc="asset $filename from $domain/"
+                
+                create_safe_link "$link_path" "$file" "$desc"
+            done
         fi
     done
 done
 
-# Summary
 echo ""
-echo "Setup complete!"
+echo "[OK] Setup complete!"
+echo "  Enabled domains: ${ENABLED_DOMAINS[*]}"
+echo "  Target directory: $TARGET_DIR"
 echo ""
-echo "Summary:"
-echo "  IDE: $IDE"
-echo "  Target: $TARGET_DIR"
-echo "  Domains: ${ENABLED_DOMAINS[*]}"
-echo ""
+echo "Next steps:"
+echo "  1. Restart your IDE for changes to take effect"
+echo "  2. Check the $TARGET_DIR directory for linked files"
+echo "  3. Use .dev-extensions.config.yaml in your project to override settings"

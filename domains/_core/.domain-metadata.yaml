@@ -17,10 +17,7 @@ domain:
   
   # What this domain provides
   provides:
-    workflows:
-      - id: "prd-creation"
-        file: "workflows/prd-creation.md"
-        description: "Generate Product Requirements Document (PRD) for new features"
+    workflows: []  # Core has no workflows (use SDLC domain for flows)
     
     templates: []  # Core has no templates
     

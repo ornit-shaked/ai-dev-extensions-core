@@ -141,11 +141,7 @@ files_generated:
   - 1-identity.md
   - 2-architecture.md
   - 3-contracts.md
-  - 4-data.md
   - 5-flows.md
-  - 6-errors.md
-  - 7-config.md
-  - 8-observability.md
   - _metadata.yaml (this file)
   - _open-issues.md
 

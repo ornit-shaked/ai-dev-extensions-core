@@ -1,0 +1,129 @@
+domain:
+  name: "sdlc"
+  display_name: "Software Development Lifecycle"
+  description: "Canonical SDLC Steps and Flows for agent-compatible development"
+  version: "1.0.0"
+  enabled_by_default: true
+  priority: 2  # After _core (0) and architecture (1)
+  
+  owner:
+    team: "Platform Engineering"
+    contact: "platform@example.com"
+  
+  provides:
+    skills:
+      # Flow skills (composite)
+      - id: "flow-create-prd"
+        file: "skills/flow-create-prd.md"
+        description: "Produce pre-implementation Product Requirements Document"
+        type: "composite"
+      
+      - id: "flow-technical-planning"
+        file: "skills/flow-technical-planning.md"
+        description: "Translate decisions into implementation plan and task breakdown"
+        type: "composite"
+      
+      - id: "flow-prepare-for-implementation"
+        file: "skills/flow-prepare-for-implementation.md"
+        description: "Ensure all prerequisites for implementation are in place"
+        type: "composite"
+      
+      - id: "flow-generate-tasks"
+        file: "skills/flow-generate-tasks.md"
+        description: "Produce structured, actionable task list from definitions"
+        type: "composite"
+      
+      # Step skills (atomic)
+      - id: "step-problem-framing"
+        file: "skills/step-problem-framing.md"
+        description: "Frame problem clearly with context and impact"
+        type: "atomic"
+      
+      - id: "step-goal-and-success-definition"
+        file: "skills/step-goal-and-success-definition.md"
+        description: "Define measurable success criteria"
+        type: "atomic"
+      
+      - id: "step-constraints-and-assumptions-identification"
+        file: "skills/step-constraints-and-assumptions-identification.md"
+        description: "Surface constraints and validate assumptions"
+        type: "atomic"
+      
+      - id: "step-context-assembly"
+        file: "skills/step-context-assembly.md"
+        description: "Gather and consolidate existing knowledge"
+        type: "atomic"
+      
+      - id: "step-option-generation"
+        file: "skills/step-option-generation.md"
+        description: "Generate solution alternatives"
+        type: "atomic"
+      
+      - id: "step-option-evaluation-and-decision"
+        file: "skills/step-option-evaluation-and-decision.md"
+        description: "Evaluate options and make decision"
+        type: "atomic"
+      
+      - id: "step-specification-contract-definition"
+        file: "skills/step-specification-contract-definition.md"
+        description: "Define specifications and contracts"
+        type: "atomic"
+      
+      - id: "step-plan-and-decomposition"
+        file: "skills/step-plan-and-decomposition.md"
+        description: "Break down work into tasks"
+        type: "atomic"
+      
+      - id: "step-readiness-assessment"
+        file: "skills/step-readiness-assessment.md"
+        description: "Assess readiness for next phase"
+        type: "atomic"
+      
+      - id: "step-artifact-validation"
+        file: "skills/step-artifact-validation.md"
+        description: "Validate artifacts against specs"
+        type: "atomic"
+      
+      - id: "step-learning-and-improvement"
+        file: "skills/step-learning-and-improvement.md"
+        description: "Extract learnings and improvements"
+        type: "atomic"
+      
+      - id: "step-incident-deviation-analysis"
+        file: "skills/step-incident-deviation-analysis.md"
+        description: "Analyze incidents and deviations"
+        type: "atomic"
+      
+      - id: "step-observation-and-monitoring"
+        file: "skills/step-observation-and-monitoring.md"
+        description: "Monitor and observe outcomes"
+        type: "atomic"
+  
+  # Dependencies
+  dependencies:
+    - architecture  # SDLC Flows may reference architecture artifacts
+  
+  # Target IDEs
+  compatible_with:
+    - windsurf
+    - cursor
+  
+  # Documentation
+  documentation:
+    guide: "README.md"
+    design: "../../tasks/ai-dev-extensions-core/sdlc-domain-design.md"
+    execution_mapping: "../../tasks/ai-dev-extensions-core/sdlc-execution-mapping-windsurf.md"
+  
+  # Notes
+  notes: |
+    The SDLC domain provides canonical development processes as AI-executable skills.
+    
+    - Flow skills are composite (orchestrate step skills)
+    - Step skills are atomic (execute prompts)
+    - All skills use markdown format with YAML frontmatter
+    - Naming convention: step-* for atomic, flow-* for composite
+  
+  # Metadata
+  created: "2026-04-19"
+  last_updated: "2026-04-19"
+  schema_version: "1.0.0"

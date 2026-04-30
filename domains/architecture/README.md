@@ -61,11 +61,7 @@ docs/architecture/
 ├── 1-identity.md          # Service identity & boundaries
 ├── 2-architecture.md      # Tech stack & C4 views
 ├── 3-contracts.md         # APIs, events, integrations
-├── 4-data.md              # Entities, migrations
 ├── 5-flows.md             # Key operational flows
-├── 6-errors.md            # Error catalog
-├── 7-config.md            # Configuration & local dev
-├── 8-observability.md     # Logs, metrics, dashboards
 ├── _metadata.yaml         # Collection summary
 └── _open-issues.md        # Items needing review
 ```
@@ -77,11 +73,7 @@ docs/architecture/
 | 1-identity.md | ESSENTIAL | SEMI | Purpose, responsibilities, ownership |
 | 2-architecture.md | ESSENTIAL | AUTO | Tech stack, components, patterns |
 | 3-contracts.md | ESSENTIAL | SEMI | REST APIs, events, integrations |
-| 4-data.md | ESSENTIAL | AUTO | Entities, migrations, invariants |
 | 5-flows.md | ESSENTIAL | SEMI | Critical operational sequences |
-| 6-errors.md | OPERATIONAL | AUTO | Exception handling, error codes |
-| 7-config.md | ESSENTIAL | AUTO | Configuration, local dev setup |
-| 8-observability.md | OPERATIONAL | SEMI | Logs, metrics, dashboards |
 | _metadata.yaml | META | AUTO | Collection summary |
 | _open-issues.md | META | AUTO | Items needing review |
 
@@ -132,20 +124,6 @@ Contains:
 
 ---
 
-### 4-data.md
-**Data layer and persistence**
-
-Contains:
-- Database type and config
-- Entities/collections
-- Migrations (Flyway/Liquibase/custom)
-- Data invariants
-- Repository methods
-
-**When to use:** Understanding data model before DB changes
-
----
-
 ### 5-flows.md
 **3-5 critical operational sequences**
 
@@ -157,47 +135,6 @@ Contains:
 - External calls
 
 **When to use:** Understanding business logic flow
-
----
-
-### 6-errors.md
-**Exception handling and error codes**
-
-Contains:
-- Custom exception hierarchy
-- Error codes and meanings
-- HTTP status mappings
-- Recovery strategies
-
-**When to use:** Proper error handling in changes
-
----
-
-### 7-config.md
-**Configuration and local development**
-
-Contains:
-- Config file locations
-- Key configuration parameters
-- Environment variables
-- Profiles (dev, k8s, prod)
-- Local setup instructions
-
-**When to use:** Understanding configuration dependencies
-
----
-
-### 8-observability.md
-**Logging, metrics, and operations**
-
-Contains:
-- Logging framework and levels
-- Metrics endpoints
-- Health checks
-- Dashboards (may need human input)
-- Runbooks
-
-**When to use:** Add appropriate logging/metrics
 
 ---
 
@@ -263,23 +200,20 @@ risk: LOW|MEDIUM|HIGH          # Change risk level
 
 ### Engineers
 - **Onboarding**: Read 1-identity.md → 2-architecture.md → 3-contracts.md
-- **Local Setup**: Follow 7-config.md instructions
-- **Troubleshooting**: Check 8-observability.md runbooks
+- **Understanding Flows**: Review 5-flows.md for business logic
+- **Implementation**: Follow patterns in 2-architecture.md
 
 ### AI Agents
 - **Before Changes**: Read _metadata.yaml for completeness
-- **Understanding Scope**: Start with 1-identity.md
-- **API Changes**: Verify 3-contracts.md
+- **Completeness**: Review _open-issues.md for uncertain areas
+- **Context Building**: Start with 1-identity.md and 3-contracts.md
+- **Implementation**: Use 2-architecture.md patterns and 5-flows.md logic
 - **Safety**: Respect `needs-human: true` flags
-
-### SRE/DevOps
-- **Operations**: Use 8-observability.md for runbooks
-- **Configuration**: Reference 7-config.md for env vars
-- **Monitoring**: Check dashboard links in 8-observability.md
 
 ### Tech Leads
 - **Architecture Review**: Compare 2-architecture.md across services
-- **Completeness**: Review _open-issues.md
+- **Standards**: Use 3-contracts.md to ensure API consistency
+- **Flow Analysis**: Review 5-flows.md for business logic patterns
 - **Maintenance**: Update after major changes
 
 ---
@@ -427,23 +361,34 @@ This domain is part of **ai-dev-extensions-core** package.
 domains/architecture/
 ├── workflows/
 │   ├── architecture-intake-create.md
-│   └── architecture-intake-resolve.md
-├── assets/
-│   ├── 1-identity.md
-│   ├── 2-architecture.md
-│   ├── 3-contracts.md
-│   ├── 4-data.md
-│   ├── 5-flows.md
-│   ├── 6-errors.md
-│   ├── 7-config.md
-│   ├── 8-observability.md
-│   ├── _metadata.yaml
-│   └── _open-issues.md
+│   ├── architecture-intake-resolve.md
+│   └── assets/
+│       └── intake-create/           # Assets for architecture-intake-create
+│           ├── 1-identity.md
+│           ├── 2-architecture.md
+│           ├── 3-contracts.md
+│           ├── 5-flows.md
+│           ├── _metadata-template.yaml
+│           └── _open-issues-template.md
 ├── .domain-metadata.yaml
 └── README.md (this file)
 ```
 
 **Integration:** See [MICROSERVICE_INTEGRATION.md](../../MICROSERVICE_INTEGRATION.md) for setup instructions.
+
+## 🔮 Future Sections (Ideas for Later)
+
+The architecture intake was simplified to focus on 4 critical sections. These additional sections were removed but could be valuable for mature services:
+
+- **Data Layer** (`4-data.md`) - Database schema, entities, migrations, data access patterns
+- **Error Catalog** (`6-errors.md`) - Exception hierarchy, error codes, recovery strategies  
+- **Configuration** (`7-config.md`) - Environment variables, feature flags, external config
+- **Observability** (`8-observability.md`) - Logging, metrics, tracing, health checks
+
+These sections can be added back when:
+- The core 4-section process is working smoothly
+- Teams request more detailed documentation
+- Services reach maturity requiring operational depth
 
 ---
 

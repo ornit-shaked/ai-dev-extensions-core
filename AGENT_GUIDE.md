@@ -32,29 +32,8 @@ Each workflow/rule/skill has its own documentation. This guide is about the **pa
 ## � Package Directory Structure
 
 **Source (this repository):**
-```
-ai-dev-extensions-core/
-├── domains/
-│   ├── _core/
-│   │   ├── .domain-metadata.yaml
-│   │   ├── workflows/
-│   │   ├── rules/
-│   │   └── skills/
-│   └── architecture/
-│       ├── .domain-metadata.yaml
-│       ├── workflows/
-│       │   ├── workflow1
-│       │   ├── workflow2
-│       │   └── assets/
-│       │       ├── templates/
-│       │       └── schemas/
-│       ├── rules/
-│       ├── skills/
-│       └── README.md
-├── manifest.yaml
-└── config/
-    └── ide-mapping.yaml
-```
+
+For complete package structure, see [README.md - File Structure](../README.md#file-structure).
 
 **Target (after deployment to a project):**
 ```
@@ -65,6 +44,8 @@ your-project/
     │   ├── workflow1        # Symlink to source
     │   ├── workflow2        # Symlink to source
     │   └── .assets-architecture/  # Symlink to workflows/assets/
+    │       ├── workflow1/   # Assets for workflow1
+    │       └── workflow2/   # Assets for workflow2
     ├── {rules-dir}/
     │   └── rule1
     └── {skills-dir}/
@@ -85,11 +66,13 @@ your-project/
 
 **Example (Windsurf):**
 ```
-Source: domains/architecture/workflows/intake
-Target: .windsurf/workflows/intake
+Source: domains/architecture/workflows/architecture-intake-create.md
+Target: .windsurf/workflows/architecture-intake-create.md
 
 Source: domains/architecture/workflows/assets/
 Target: .windsurf/workflows/.assets-architecture/
+    ├── intake-create/   # Assets for architecture-intake-create
+    └── intake-resolve/  # Assets for architecture-intake-resolve (future)
 ```
 
 **Note:** rules/skills may have also assets/ directories
@@ -110,9 +93,9 @@ Target: .windsurf/workflows/.assets-architecture/
 - ✅ `architecture`
 - ✅ `code-review`
 
-**Assets directories:** `.assets-{domain}`
-- ✅ `.assets-architecture`
-- ✅ `.assets-security`
+**Assets directories:** `.assets-{domain}/{workflow-name}/`
+- ✅ `.assets-architecture/intake-create/`
+- ✅ `.assets-security/scan/` (example)
 
 ---
 

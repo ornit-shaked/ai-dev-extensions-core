@@ -1,0 +1,52 @@
+# SDLC Open Issues
+
+For each issue that we are discussing,suggest me options and pros/cons for each. if u didnt understand the problem well ask me.
+we dont need to resolve all of them in one step, but u need to brief them and put them in the planinng, need to decide what need to discuess now, what can be wait for stable solution, what if we will not find a good solution now will cause to big refactor later. u can reffer also to my opinion of the priority level (High, Medium, Low) for each issue.
+
+## Priority
+
+### High
+
+- PR review still not implemented
+- Execution mapping (Windsurf Phase 1) - not all implemented
+- ln planing we need to plan all, but first I want example  how are are going to implement the execution mapping on one step for each type (prompt, workflow, skill). and how the flow will call/use it.  
+- we will start only with one flow exmple, and than continue one by one. you will not continue without approve from me [human]
+we need to define the structure of the flow and the steps, and how the flow will call/use the execution mapping, test it and approve it before we continue.
+
+
+- Is every step will have his own output? Is flow output will gather all steps output under one output?
+
+- where to store the steps and flows dir (we are taking on in this packageand ot on the target hosting project, this has another section for it)? 
+in Architecture domain, we store the assets inside the workflow, but here it seems that assets can be used by workflows/rulles or skills, in the future may have more. the stracture should be well defined and alligned over all domains, what is your suggestion (consider that we want to have generic package that can be used by any project, and ths package copy the files into the hosting project by idea type, what I am trying to say that skills, workflow and rulles folders are differetn from assets folder conceptual.)
+
+- There is logic relation between flows, for example we can run 'Problem Definition' and than 'Create PRD' and than 'Define Epic' and so on, so if we will find the relations and we will know that if flow should be run, flow can automaticly access to the relevant output of previous flow (if we will keep the structure, for example, domains/sdlc/sdn-xxx1/problem-definition/problem-definition_date and etc).
+in same way flow can access to domains/atchitecture/project_name/some relevant data (need to define it and architect it properly) if data not exist, flow will get the data in other way (asking user, searching in knowledge base, etc. need to think on best practice also here)
+based on it need to think on properly stracture in the target project, and if to copy nevigator files to the target (means, for example architecture domain has domain-metadata.yaml file, that explain which sections are exist in which file, today this file not exist in target/hosted project, we have _metadata.yaml 
+and _open-issues.md)
+where sdn-xxx1 is issues identifier.
+
+- G. Artifact Materialization & Configurability section from sdlc-domain-design is stipp open - stracture for SDLC domain, stracture for Architecture domain (exist, but need to validate this is good solution now when we have also another domains.)
+
+- How we acheive **Adaptive Guidance, Not Rigid Processes** Completeness is contextual, not absolute. A Flow or Step is sufficiently complete when it provides enough information to safely progress — not when all possible information has been collected.?
+In Flow/Workflow?
+
+- Interesting point for execution mapping Winssurf layer - Steps are named by their semantic responsibility, not by when they run.
+maybe step should be a skill? and workflow should be a composition of skills? what is the best practice from Windsurf prespective? if som how it will impact of the 'generic package' concept? it will not cause to code duplication?
+
+- Need to discuess on **A Flow is descriptive, not prescriptive**, 
+it's related to **Right-Sized Rigor**? if we will force to follow all steps, it will be rigid process
+
+## Medium  
+- How can we acheive **Right-Sized Rigor** - Flows guide thinking; they do not enforce execution. A Flow describes what may be relevant and which Steps are commonly useful, without implying mandatory execution of all Steps, a fixed order, or a checklist-style process? 
+for example, new feature and resolve pr, sometimes need similar or same flow, small pr and big pr need same flow but not alwas with all steps
+
+- **New Step Suggestions** (Added 2026-04-20):
+  - **MVP Definition Step**: Consider adding a dedicated step for defining Minimum Viable Product scope, helping teams focus on essential features vs nice-to-haves. Would help in Create PRD and Technical Planning flows.
+  - **Brainstorming Step**: Consider adding a step for structured brainstorming/ideation before option generation. May help surface creative solutions early in the process.
+
+### Future/refactor
+- today files workflows, rulles, skills and assets are copied to workspace and not to global, where all the projects need the same files, need to cosider in the future to copy it to global (now we can control it via configuration) the output can be in target project that workflow/skills/rulles apply on.
+
+- As futire step, and not so far, we want that package will know how to solve flows that are composed more then one project, for this we need one place that holds all the archtecture domain for few projects, for now we will store it under artifcats inside the domain, in future maybe if we will keed all the workflows, rulles, skills and assets globaly, maybe we  will store project navigation with short description on each project and in this way we will know how to handle cross system.
+
+- Need to think on the complexity of the package, and maybe implent directly to Windsurf, or doing seperate package for it.

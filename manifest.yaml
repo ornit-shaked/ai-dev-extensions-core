@@ -1,22 +1,21 @@
 # AI Dev Extensions Core - Manifest
-# This file defines the extension metadata and IDE mappings
+# This file defines the extension metadata and configuration references
 #
 # PURPOSE:
-#   - Package-level metadata and configuration
-#   - Defines which domains are available and their load order
-#   - Specifies IDE compatibility and features
-#   - Used by setup scripts to configure microservice projects
+#   - Package-level metadata
+#   - References to configuration files (references section)
+#   - Used by setup scripts to locate configuration files
 #
 # WHO USES IT:
-#   - Setup scripts (setup-microservice.ps1) - reads domain configuration
-#   - Package maintainers - update when adding/removing domains
-#   - Microservice developers - can override via .dev-extensions.config.yaml
+#   - Setup scripts - read configuration file references
+#   - Package maintainers - update version and compatibility
+#   - Microservice developers - see package information
 #   - IDEs - may read metadata in future for automatic discovery
 #
 # WHEN TO EDIT:
-#   - Adding a new domain → update 'domains' section
-#   - Changing IDE support → update 'compatibility' section
 #   - Package version bump → update 'version'
+#   - Changing IDE support → update 'compatibility' section
+#   - Adding new configuration files → update references
 
 extension:
   name: "ai-dev-extensions-core"
@@ -30,52 +29,22 @@ extension:
     type: "git"
     url: "https://github.com/ornit-shaked/ai-dev-extensions-core"
     bitbucket: "https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-extensions-core.git"
-  
-  # IDE mapping configuration
-  # See config/ide-mapping.yaml for detailed IDE-specific mappings
-  ide_config: "config/ide-mapping.yaml"
-  
-  # Minimum IDE versions (when applicable)
-  compatibility:
-    windsurf:
-      min_version: "1.0.0"
-      supported: true
-      features: ["workflows", "rules", "skills"]
-    cursor:
-      min_version: "0.1.0"
-      supported: true
-      features: ["workflows", "rules"]
-    vscode:
-      supported: false  # Planned
-    intellij:
-      supported: false  # Requires plugin detection
 
-# Domain configuration
-domains:
-  _core:
-    enabled_by_default: true
-    description: "Shared rules, skills, and utilities"
-    priority: 0  # Loaded first
+
+  # Configuration File References
+  # See references section below for details about each file contains and when to use it
+references:
+  domain_config:
+    file: "config/domain-mapping.yaml"
+    purpose: "Defines available domains, their load order, and default enablement"
+    contains: ["domain definitions", "priority settings", "enablement flags", "content types"]
+    used_by: ["setup scripts", "domain management"]
     
-  architecture:
-    enabled_by_default: true
-    description: "Architecture documentation and intake workflows"
-    priority: 1
-
-# IDE-specific mappings
-# Detailed mappings are defined in config/ide-mapping.yaml
-# The setup script reads that file to determine target directories
-# and content type mappings for each supported IDE.
-#
-# To add support for a new IDE, update config/ide-mapping.yaml
-# and the setup script will automatically handle it.
-
-# Feature flags (for future use)
-features:
-  skills_support: false      # Phase 2
-  dynamic_loading: false     # Phase 2
-  auto_updates: false        # Phase 3
-  mcp_integration: false     # Phase 3
+  ide_config:
+    file: "config/ide-mapping.yaml"
+    purpose: "Maps domain content to IDE-specific directory structures"
+    contains: ["IDE target directories", "content type mappings", "file patterns", "assets handling"]
+    used_by: ["setup scripts", "IDE integration"]
 
 # Metadata
 metadata:

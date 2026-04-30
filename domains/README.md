@@ -4,31 +4,9 @@ Domain-specific workflows, templates, rules, and skills.
 
 ---
 
-## Available Domains
-
-### _core (Priority 0)
-Shared rules and skills used by all domains. Always loaded first.
-- `rules/` - Behavioral constraints for AI agents
-- `skills/` - Reusable capabilities (future)
-
-### architecture (Priority 1)
-Architecture documentation workflows and templates.
-- `workflows/` - architecture-intake-create, architecture-intake-resolve
-- `templates/` - 8 section templates for microservice documentation
-- **Example**: See `examples/architecture/user-service-example/`
-
----
 
 ## Domain Structure
 
-Each domain follows this pattern:
-```
-domains/{domain-name}/
-├── workflows/              # Workflow definitions
-├── templates/              # Template files
-├── .domain-metadata.yaml   # Domain configuration
-└── README.md              # Domain documentation
-```
 
 ---
 
@@ -37,7 +15,7 @@ domains/{domain-name}/
 **For detailed step-by-step instructions**, see `agent.md` or use AI assistance.
 
 **Quick reference**:
-- Create `domains/{name}/{workflows,templates}/`
+- Create `domains/{name}/{workflows,skills}/`
 - Add `.domain-metadata.yaml` (see architecture domain as example)
 - Update root `manifest.yaml`
 - Create domain README

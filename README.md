@@ -1,39 +1,51 @@
 # AI Dev Extensions Core
 
-**Reusable AI development workflows and rules for multiple IDEs**
-
-A language-agnostic package providing structured workflows and rules that can be integrated into any microservice or project, regardless of programming language. Works with Windsurf, Cursor, and other AI-powered IDEs.
+**Reusable AI development workflows, skills, and rules for multiple IDEs - Language-agnostic**
 
 ---
 
 ## 📑 Table of Contents
 
-- [What is This?](#-what-is-this)
-- [Quick Start](#-quick-start)
-- [What's Inside?](#-whats-inside)
-- [Documentation](#-documentation)
-- [Multi-IDE Support](#-multi-ide-support)
+- [Introduction](#section-1-introduction)
+- [Prerequisites](#-prerequisites)
+- [How To Use](#section-2-how-to-use)
+- [What's Included](#-whats-included)
+- [What's NOT Included (Non-Goals)](#-whats-not-included-non-goals)
+- [Documentation Navigation](#-documentation-navigation)
 - [Features](#-features)
-- [Configuration](#-configuration)
-- [Contributing](#-contributing)
+  - [Multi-IDE Support](#️-multi-ide-support)
+  - [Multi-Domains Support](#️-multi-domains-support)
 - [Troubleshooting](#-troubleshooting)
 - [License](#-license)
+- [Acknowledgments](#-acknowledgments)
 
 ---
 
-## 🎯 What is This?
+## Section 1: Introduction
 
-This is a **content package** (not a code library) containing:
-
-- 📋 **Workflows**: Step-by-step guides for AI agents (architecture intake, code review, etc.).
-- 📏 **Rules**: Best practices and constraints for AI assistants
-- 🛠️ **Skills**: Task-specific capabilities (future)
-
+**What**: A language-agnostic content package providing structured workflows, rules, and skills for AI-powered development tools (Windsurf, Cursor, VS Code). The package is distributed as a Git submodule and integrates into projects via symlinks, enabling AI agents to follow standardized processes such as architecture documentation, PRD creation, code review and etc.
 Think of it as a **"plugin pack"** for AI development tools.
 
+**Why**: Development teams lack standardized, reusable workflows for AI agents working on microservices. Each project creates ad-hoc documentation approaches, leading to inconsistent quality, repeated work, and poor AI agent guidance. This package solves the problem by providing battle-tested workflows that AI agents can consume directly from their IDE.
+
+**Goal**: Enable AI agents across multiple IDEs to produce consistent, high-quality documentation and follow best practices through standardized workflows, skills, and rules that are maintained centrally and distributed to all projects.
+
 ---
 
-## 🚀 Quick Start
+## 📋 Prerequisites
+
+Before you begin, ensure you have:
+
+- **Git** installed and configured
+- **PowerShell 5.1+** (Windows) or **Bash 4.0+** (Linux/Mac)
+- **Administrator rights** or **Developer Mode enabled** (Windows only, for symlinks)
+  - *Alternative*: Script automatically uses copy mode if symlinks aren't available
+  - *Copy mode*: Works without admin, but requires re-running setup after package updates
+  - *Symlink mode*: Recommended, updates automatically with package
+
+---
+
+## Section 2: How To Use
 
 ### Two Simple Steps
 
@@ -102,7 +114,204 @@ git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-exte
 
 ---
 
-## � Troubleshooting
+## 📦 What's Included
+
+This package provides:
+
+- **📋 Workflows**: Step-by-step guides for AI agents (architecture intake, PRD creation, code review)
+- **📏 Rules**: Best practices and behavioral constraints for AI assistants
+- **🛠️ Skills**: Task-specific capabilities (YAML-based)
+- **📁 Domains**: Organized content modules (`_core`, `architecture`, and extensible)
+- **⚙️ Setup Scripts**: Automated integration for Windows/Linux/Mac
+- **📝 Examples**: Sample outputs demonstrating correct workflow execution
+
+### File Structure
+
+**Domain Structure Pattern:**
+
+Each domain can contain:
+```
+domain-name/
+├── workflows/           # Workflow definitions (*.md)
+│   └── assets/         # Optional: workflow assets (templates, schemas)
+│       ├── workflow-a/ # Assets specific to workflow-a
+│       └── workflow-b/ # Assets specific to workflow-b
+├── rules/              # Behavioral rules (*.md)
+│   └── assets/         # Optional: rule assets
+├── skills/             # Skill definitions (*.md)
+│   └── assets/         # Optional: skill assets
+├── .domain-metadata.yaml    # Domain registration and asset inventory
+└── README.md               # Human-readable documentation and usage guide
+```
+
+**File Purposes:**
+- **`.domain-metadata.yaml`**: Technical registration (name, priority, dependencies, asset list with IDs/paths)
+- **`README.md`**: User documentation (overview, usage examples, available workflows/skills descriptions)
+
+**Asset Organization:**
+- Assets are organized per-workflow/rule/skill for clear ownership
+- Referenced in workflows as `.assets-{domain}/{workflow-name}/file.md`
+
+**Package Structure:**
+
+```
+ai-dev-extensions-core/
+├── domains/
+│   ├── _core/          # Shared rules and skills (priority 0)
+│   ├── architecture/   # Architecture workflows (priority 1)
+│   └── sdlc/          # SDLC flows and steps (priority 2)
+├── config/
+│   ├── domain-mapping.yaml
+│   └── ide-mapping.yaml
+├── scripts/
+│   ├── setup-microservice.ps1
+│   └── setup-microservice.sh
+├── manifest.yaml
+├── AGENT_GUIDE.md
+└── README.md
+```
+
+---
+
+## ❌ What's NOT Included (Non-Goals)
+
+This package is a **content-only package**. It does NOT:
+
+- ❌ **Generate code automatically** - Workflows guide documentation only, not code implementation
+- ❌ **Act as an IDE plugin** - Works with existing AI IDE capabilities (Windsurf, Cursor, etc.)
+- ❌ **Execute code or run linting** - Static content package only, no runtime execution
+- ❌ **Provide authentication or access control** - Relies on Git repository permissions
+- ❌ **Offer cloud-hosted SaaS service** - Git-based distribution only
+- ❌ **Create PRs or integrate with CI/CD** - Manual workflow execution
+- ❌ **Support multi-language translations** - English only in v1.0
+- ❌ **Include visual workflow editors or GUI tools** - Markdown-based workflows
+
+Think of it as a **"recipe book" for AI agents**, not a code generator or automation tool.
+
+---
+
+## 📖 Documentation Navigation
+
+### For Developers
+- **[README.md](./README.md)** - This file (overview, quick start and setup guide)
+
+### For AI Agents
+- **[AGENT_GUIDE.md](./AGENT_GUIDE.md)** - Complete guide for AI consumption and domain creation
+
+### Configuration & Technical
+- **[manifest.yaml](./manifest.yaml)** - Package metadata and reference configuration
+- **[config/ide-mapping.yaml](./config/ide-mapping.yaml)** - IDE-specific mappings (you can add/edit support for new IDEs here)
+- **[config/domain-mapping.yaml](./config/domain-mapping.yaml)** - Domain-specific mappings (you can add/edit support for new domains here)
+- **[scripts/setup-microservice.ps1](./scripts/setup-microservice.ps1)** - Setup automation for Windows
+- **[scripts/setup-microservice.sh](./scripts/setup-microservice.sh)** - Setup automation for bash
+- **[domains/](./domains/)** - Domain-specific content (_core, architecture)
+
+---
+
+
+## 🎨 Features
+
+### Key Features
+
+- Multi-IDE support
+- Multi-domains support
+- Language-agnostic design
+- Content only (no code dependencies, no build required)
+
+---
+
+### Supported and Future Planning
+
+✅ Phase 1 (Current)
+- ✅ User-configurable enable/disable per domain
+- ✅ Architecture domain with intake workflows
+- ✅ Core domain
+- ✅ Windsurf workflow integration
+- ✅ Git-based distribution
+
+🚧 Phase 2 (Planned)
+- 🚧 Extending Core domain with shared rules
+- 🚧 Cursor IDE support
+
+🔮 Phase 3 (Future)
+- 🔮 npm package distribution
+- 🔮 JFrog/Artifactory support
+- 🔮 Auto-update mechanism
+- 🔮 MCP (Model Context Protocol) integration
+- 🔮 Multi-IDE auto-discovery
+
+---
+
+### Features Explanation
+
+#### 🖥️ Multi-IDE Support
+
+This package works with multiple AI-powered IDEs:
+
+| IDE | Status | Workflows | Rules | Skills |
+|-----|--------|-----------|-------|--------|
+| **Windsurf** | ✅ Full Support | ✅ | ✅ | ✅ |
+| **Cursor** | ✅ Supported | ✅ | ✅ | ❌ |
+| **VS Code** | 🚧 Planned | - | - | - |
+| **IntelliJ** | ⚠️ Manual Setup | ✅ | ✅ | ❌ |
+
+**Note**: Each type may contain a `assets/` subdirectory with type-specific assets (templates, config files, etc.).
+
+IDE-Specific Notes
+
+**Windsurf**: Full support for all content types. Auto-detection works seamlessly.
+
+**Cursor**: Supports workflows (as prompts) and rules. Skills not supported.
+
+**VS Code**: Planned for future releases. Will require AI extension (Copilot, Continue.dev, etc.).
+
+---
+
+### 🖥️ Multi-Domains Support
+
+This package supports multiple domains:
+
+| Domain | Status | Description |
+|--------|--------|-------------|
+| **_core** | ✅ Active | Shared basic workflows and utilities |
+| **architecture** | ✅ Active | Architecture intake workflows |
+| **[new-domain]** | 🚧 Planned | Add your own domains |
+
+**Note**: You can add new domains by creating a new directory in the `domains/` folder and updating `config/domain-mapping.yaml`.
+You can control which domains are enabled/disabled in the `config/domain-mapping.yaml` file.
+You can control the loading order of domains in the `config/domain-mapping.yaml` file.
+
+#### Adding a New Domain
+
+**Quick reference**:
+- Create `domains/{name}/{workflows,rules,skills}/`
+- Add `.domain-metadata.yaml` (see architecture domain as example)
+- Update `config/domain-mapping.yaml` to register the new domain
+- Create domain README
+- See [AGENT_GUIDE.md](./AGENT_GUIDE.md) for detailed instructions
+
+**Key metadata fields**:
+- `priority`: Loading order (0=first, 1,2,3... = later)
+- `enabled_by_default`: true/false
+- `content_types`: List of content types (workflows, rules, skills)
+- `description`: Brief description of the domain
+
+---
+
+## 🐛 Troubleshooting
+
+**Workflows not appearing in Windsurf?**
+- Check symlinks: `ls -la .windsurf/workflows`
+- Verify frontmatter in workflow files
+- Restart Windsurf
+
+**Wrong content showing up?**
+- Update submodule: `git submodule update --remote`
+- Check you're on correct version/tag
+
+**Need help?**
+- Review [AGENT_GUIDE.md](./AGENT_GUIDE.md) for domain creation
+- Open an issue on GitHub
 
 ### Removing/Reinstalling Submodule
 
@@ -134,168 +343,6 @@ git submodule add <repo-url> .dev-extensions
 
 ---
 
-## �� What's Inside?
-
-### Domains
-
-#### 🧩 Core Domain (_core)
-- **Rules**: Shared behavioral constraints (no-fabrication, minimal-changes)
-- **Skills**: Reusable capabilities (future)
-- **Priority**: Loaded first, used by all other domains
-
-#### 🏗️ Architecture Domain
-- **Workflows**: Architecture intake (create & resolve) with embedded templates
-- **Use case**: Document microservice architecture for AI agents
-- **Example**: See `examples/architecture/user-service-example/`
-
----
-
-## 📖 Documentation
-
-### For Developers
-- **[SETUP.md](./SETUP.md)** - Integration guide
-- **[CHANGELOG.md](./CHANGELOG.md)** - Version history and breaking changes
-
-### For AI Agents
-- **[AGENT_GUIDE.md](./AGENT_GUIDE.md)** - Complete guide for AI consumption and domain creation
-
-### Configuration & Technical
-- **[manifest.yaml](./manifest.yaml)** - Package metadata and domain configuration
-- **[config/ide-mapping.yaml](./config/ide-mapping.yaml)** - IDE-specific mappings
-- **[scripts/setup-microservice.ps1](./scripts/setup-microservice.ps1)** - Setup automation
-- **[domains/](./domains/)** - Domain-specific content (_core, architecture)
-
----
-
-## 🖥️ Multi-IDE Support
-
-This package works with multiple AI-powered IDEs:
-
-| IDE | Status | Workflows | Rules | Skills |
-|-----|--------|-----------|-------|--------|
-| **Windsurf** | ✅ Full Support | ✅ | ✅ | ✅ |
-| **Cursor** | ✅ Supported | ✅ | ✅ | ❌ |
-| **VS Code** | 🚧 Planned | - | - | - |
-| **IntelliJ** | ⚠️ Manual Setup | ✅ | ✅ | ❌ |
-
-**Note**: Workflows may contain a `templates/` subdirectory with workflow-specific assets (document templates, config files, etc.).
-
-### IDE-Specific Notes
-
-**Windsurf**: Full support for all content types. Auto-detection works seamlessly.
-
-**Cursor**: Supports workflows (as prompts) and rules. Skills not supported.
-
-**VS Code**: Planned for future releases. Will require AI extension (Copilot, Continue.dev, etc.).
-
-**IntelliJ/JetBrains IDEs**: Requires manual setup as the script cannot auto-detect AI plugins. See `config/ide-mapping.yaml` for instructions.
-
-### Configuration
-
-IDE mappings are defined in [`config/ide-mapping.yaml`](./config/ide-mapping.yaml). To add support for a new IDE:
-1. Update `config/ide-mapping.yaml` with target directories and mappings
-2. Setup script will automatically handle the new IDE
-3. Test and submit a PR!
-
----
-
-## 🎨 Features
-
-### ✅ Phase 1 (Current)
-- ✅ Architecture domain with intake workflows
-- ✅ Core domain with shared rules
-- ✅ Windsurf workflow integration
-- ✅ Language-agnostic design
-- ✅ Complete example output
-- ✅ Git-based distribution
-
-### 🚧 Phase 2 (Planned)
-- 🚧 User-configurable enable/disable per domain
-- 🚧 Cursor IDE support
-
-### 🔮 Phase 3 (Future)
-- 🚧 npm package distribution
-- 🔮 JFrog/Artifactory support
-- 🔮 Auto-update mechanism
-- 🔮 MCP (Model Context Protocol) integration
-- 🔮 Multi-IDE auto-discovery
-
----
-
-## 🔧 Configuration
-
-### Enabling/Disabling Domains
-
-**Manual approach** (Phase 1):
-```bash
-# Only use architecture domain
-ln -s ../.dev-extensions/domains/architecture/workflows .windsurf/workflows
-# Don't link security domain
-```
-
-**Future approach** (Phase 2):
-```yaml
-# Package structure
-ai-dev-extensions-core/
-  ├── manifest.yaml              # Package metadata and IDE mappings
-  ├── domains/                   # Domain-specific content
-  │   ├── _core/                # Shared rules, skills (priority 0)
-  │   │   ├── rules/           # Behavioral constraints
-  │   │   └── skills/          # Reusable capabilities
-  │   └── architecture/         # Architecture documentation domain
-  │       └── workflows/       # Architecture intake workflows
-  │           └── assets/      # Workflow assets
-  │               └── templates/
-  ├── examples/                  # Example workflow outputs
-  └── docs/                      # Additional documentation
-
-# After integration (flatten mode)
-.windsurf/
-  └── workflows/
-      ├── architecture-intake-create.md    # Individual workflow files
-      ├── architecture-intake-resolve.md
-      └── .assets-architecture/            # Symlinked from source assets/
-          └── templates/                   # Workflow assets
-```
-
----
-
-## 🤝 Contributing
-
-**Note**: Contributing guidelines will be added when project becomes open source.
-
-### Adding a New Domain
-
-**Quick reference**:
-- Create `domains/{name}/{workflows,skills}/`
-- Add `.domain-metadata.yaml` (see architecture domain as example)
-- Update root `manifest.yaml`
-- Create domain README
-
-**Key metadata fields**:
-- `priority`: Loading order (0=first, higher=later)
-- `dependencies`: Always include `_core`
-- `enabled_by_default`: true/false
-
-
-## 🐛 Troubleshooting
-
-**Workflows not appearing in Windsurf?**
-- Check symlinks: `ls -la .windsurf/workflows`
-- Verify frontmatter in workflow files
-- Restart Windsurf
-
-**Wrong content showing up?**
-- Update submodule: `git submodule update --remote`
-- Check you're on correct version/tag
-
-**Need help?**
-- Check [MICROSERVICE_INTEGRATION.md](./MICROSERVICE_INTEGRATION.md)
-- Review examples in `examples/` directory
-- Open an issue on GitHub
-
----
-
 ## 📝 License
 
 MIT License - see [LICENSE](./LICENSE) file
@@ -313,4 +360,4 @@ Built for AI-powered development with:
 
 **Version**: 0.1.0  
 **Status**: Active Development (Phase 1)  
-**Last Updated**: March 19, 2026
+**Last Updated**: March 22, 2026

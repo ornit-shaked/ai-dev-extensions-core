@@ -115,13 +115,15 @@ content_types:
     description: "AI agent behavioral rules"
     
   skills:
-    file_pattern: "*.skill.yaml"
-    description: "AI agent skill definitions"
+    file_pattern: "*.md"
+    description: "AI agent skill definitions (Markdown with YAML frontmatter)"
 
 # Assets Convention
 # Any content type (workflows, rules, skills) may contain an assets/ subdirectory.
+# Assets are organized per-workflow/rule/skill for clear ownership.
 # The setup script automatically symlinks assets/ to .assets-{domain}/ in the IDE directory.
 # Example: domains/architecture/workflows/assets/ → .windsurf/workflows/.assets-architecture/
+#   with subdirectories: intake-create/, intake-resolve/, etc.
 
 # Default behavior
 defaults:
@@ -135,8 +137,10 @@ defaults:
   #   Example:
   #     .windsurf/workflows/architecture-intake-create.md → individual file symlink
   #     .windsurf/workflows/.assets-architecture/ → workflows/assets/ symlink
+  #       ├── intake-create/   # Assets for architecture-intake-create
+  #       └── intake-resolve/  # Assets for architecture-intake-resolve
   #   Pros: IDE discovers all workflows (Windsurf requires workflows directly under .windsurf/workflows/)
-  #   Pros: Multiple domains coexist, assets organized per-domain
+  #   Pros: Multiple domains coexist, assets organized per-workflow for clear ownership
   #   Cons: More symlinks to manage
   #
   # "directory" (legacy, broken in Windsurf):
@@ -150,6 +154,7 @@ defaults:
   # The assets/ directory under workflows/, rules/, or skills/ is symlinked to this location
   # Pattern: .assets-{domain}/ → source workflows/assets/
   # Example: .windsurf/workflows/.assets-architecture/ → domains/architecture/workflows/assets/
+  #   Workflows reference: .assets-architecture/intake-create/file.md
   asset_directory_pattern: ".assets-{domain}"
   
 # Notes for developers

@@ -408,8 +408,6 @@ Replace the `> ⚠️ **Needs Review**: ...` block with the verified value.
 If user says "ok": change metadata from `needs-human: true` to `needs-human: false`.
 If user provides corrections: apply them inline to the flow steps.
 
-### Dashboard links (8-observability.md)
-Add links under the `## Dashboards` section.
 
 ---
 

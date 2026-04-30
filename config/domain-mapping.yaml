@@ -1,0 +1,77 @@
+# Domain Mapping Configuration
+# Defines available domains, their load order, and default enablement
+#
+# PURPOSE:
+#   - Single source of truth for domain configuration
+#   - Defines which domains exist and their priority
+#   - Used by setup scripts to determine what to load
+#
+# WHO USES IT:
+#   - Setup scripts - read domain list and priority
+#   - Package maintainers - add/remove/configure domains
+#   - Microservice projects - can override via .dev-extensions.config.yaml
+#
+# WHEN TO EDIT:
+#   - Adding a new domain → update 'domains' section
+#   - Changing load order → modify 'priority' values
+#   - Changing default enablement → update 'enabled_by_default'
+
+version: "1.0.0"
+
+# Domain definitions
+domains:
+  _core:
+    enabled_by_default: true
+    description: "Shared rules, skills, and utilities"
+    priority: 0  # Loaded first
+    path: "domains/_core"
+    content_types:
+      - workflows
+      - rules
+      - skills
+    
+  architecture:
+    enabled_by_default: true
+    description: "Architecture collection"
+    priority: 1
+    path: "domains/architecture"
+    content_types:
+      - workflows
+  
+  sdlc:
+    enabled_by_default: true
+    description: "Software Development Lifecycle processes"
+    priority: 2
+    path: "domains/sdlc"
+    content_types:
+      - skills
+
+# Load order configuration
+load_order:
+  strategy: "priority"  # Domains loaded by priority field (lower numbers first)
+  
+# Default configuration
+defaults:
+  enabled_domains:
+    - _core
+    - architecture
+    - sdlc
+
+# Notes for developers
+notes: |
+  To add a new domain (you can use domains\agent.md as a guide):
+  1. Create directory: domains/{domain-name}/
+  2. Add entry above with unique priority
+  3. Create .domain-metadata.yaml in domain directory
+  4. Test with setup script
+  5. Update documentation if needed
+  
+  Priority rules:
+  - Lower numbers = higher priority (loaded first)
+  - _core should always be priority 0
+  - Use sequential numbers: 0, 1, 2, 3...
+  
+  Content types:
+  - workflows: Workflow definitions
+  - rules: AI agent rules (*.md files)
+  - skills: AI agent skills (*.skill.yaml files)
