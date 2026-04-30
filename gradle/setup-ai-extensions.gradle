@@ -1,0 +1,153 @@
+/**
+ * AI Dev Extensions Core Setup
+ * Simple Gradle task to download and setup ai-dev-extensions-core in any project
+ * 
+ * Usage:
+ *   Add to build.gradle: apply from: 'https://raw.githubusercontent.com/ornit-shaked/ai-dev-extensions-core/main/gradle/setup-ai-extensions.gradle'
+ *   Run: ./gradlew setupAiExtensions
+ */
+
+ext {
+    aiExtensionsVersion = 'main' // or specific tag/branch
+    aiExtensionsRepo = 'https://github.com/ornit-shaked/ai-dev-extensions-core'
+    aiExtensionsDownloadUrl = "${aiExtensionsRepo}/archive/refs/heads/${aiExtensionsVersion}.zip"
+}
+
+task downloadAiExtensions {
+    description = 'Downloads ai-dev-extensions-core from GitHub'
+    group = 'ai-extensions'
+    
+    doLast {
+        def downloadDir = file("${buildDir}/ai-extensions-download")
+        def zipFile = file("${downloadDir}/ai-extensions.zip")
+        
+        // Create download directory
+        downloadDir.mkdirs()
+        
+        // Download zip file
+        println "📦 Downloading ai-dev-extensions-core from GitHub..."
+        def url = new URL(aiExtensionsDownloadUrl)
+        zipFile.bytes = url.bytes
+        println "✅ Downloaded to ${zipFile}"
+        
+        // Extract zip
+        println "📂 Extracting files..."
+        copy {
+            from zipTree(zipFile)
+            into downloadDir
+        }
+        
+        println "✅ Extracted ai-extensions-core"
+    }
+}
+
+task copyAiExtensions(dependsOn: downloadAiExtensions) {
+    description = 'Copies workflows and domains to project'
+    group = 'ai-extensions'
+    
+    doLast {
+        def sourceDir = file("${buildDir}/ai-extensions-download/ai-dev-extensions-core-${aiExtensionsVersion}")
+        def projectRoot = projectDir
+        
+        // Copy .windsurf/workflows
+        println "📁 Copying workflows..."
+        copy {
+            from "${sourceDir}/.windsurf"
+            into "${projectRoot}/.windsurf"
+            include "**/*"
+        }
+        
+        // Copy domains (excluding _core if exists)
+        println "📁 Copying domains..."
+        copy {
+            from "${sourceDir}/domains"
+            into "${projectRoot}/.ai-extensions/domains"
+            exclude "_core/**" // Keep _core separate to avoid conflicts
+        }
+        
+        // Copy core rules and skills separately
+        copy {
+            from "${sourceDir}/domains/_core"
+            into "${projectRoot}/.ai-extensions/core"
+        }
+        
+        println "✅ Copied workflows and domains"
+    }
+}
+
+task updateGitignore(dependsOn: copyAiExtensions) {
+    description = 'Updates .gitignore with ai-extensions entries'
+    group = 'ai-extensions'
+    
+    doLast {
+        def gitignoreFile = file("${projectDir}/.gitignore")
+        def aiExtensionsEntries = """
+# AI Dev Extensions
+.ai-extensions/
+.windsurf/rules/
+.windsurf/skills/
+"""
+        
+        if (gitignoreFile.exists()) {
+            def content = gitignoreFile.text
+            if (!content.contains("# AI Dev Extensions")) {
+                println "📝 Updating .gitignore..."
+                gitignoreFile.append(aiExtensionsEntries)
+                println "✅ Updated .gitignore"
+            } else {
+                println "ℹ️  .gitignore already contains AI Extensions entries"
+            }
+        } else {
+            println "📝 Creating .gitignore..."
+            gitignoreFile.text = aiExtensionsEntries
+            println "✅ Created .gitignore"
+        }
+    }
+}
+
+task cleanupAiExtensions {
+    description = 'Removes downloaded files'
+    group = 'ai-extensions'
+    
+    doLast {
+        def downloadDir = file("${buildDir}/ai-extensions-download")
+        if (downloadDir.exists()) {
+            println "🗑️  Cleaning up download files..."
+            downloadDir.deleteDir()
+            println "✅ Cleanup complete"
+        }
+    }
+}
+
+task setupAiExtensions(dependsOn: [copyAiExtensions, updateGitignore, cleanupAiExtensions]) {
+    description = 'Complete setup of ai-dev-extensions-core'
+    group = 'ai-extensions'
+    
+    doLast {
+        println """
+✅ AI Dev Extensions Core setup complete!
+
+📁 Files installed:
+   .windsurf/workflows/     - All workflow files
+   .ai-extensions/domains/  - Architecture and SDLC domains  
+   .ai-extensions/core/     - Core rules and skills
+
+🚀 Available workflows:
+   /architecture-intake-create
+   /architecture-intake-resolve
+   /sdlc-domain-design
+   /create-prd
+
+📝 Usage:
+   1. Open your project in Windsurf/Cursor
+   2. Run any workflow: /architecture-intake-create
+   3. Follow the prompts
+
+🔄 To update:
+   ./gradlew setupAiExtensions (will overwrite with latest)
+"""
+    }
+}
+
+// Make cleanup run after setup
+setupAiExtensions.finalizedBy cleanupAiExtensions

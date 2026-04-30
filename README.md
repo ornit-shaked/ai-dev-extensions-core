@@ -47,51 +47,48 @@ Before you begin, ensure you have:
 
 ## Section 2: How To Use
 
-### Two Simple Steps
+### 🚀 Super Simple (Recommended)
+
+**One line in your build.gradle:**
+
+```gradle
+apply from: 'https://raw.githubusercontent.com/ornit-shaked/ai-dev-extensions-core/main/gradle/setup-ai-extensions.gradle'
+```
+
+**Then run:**
+```bash
+./gradlew setupAiExtensions
+```
+
+**That's it!** The task will:
+- ✅ Download latest version from GitHub
+- ✅ Copy workflows to `.windsurf/workflows/`  
+- ✅ Copy domains to `.ai-extensions/domains/`
+- ✅ Update `.gitignore`
+- ✅ Clean up temporary files
+
+---
+
+### 🔧 Advanced: Git Submodule (If you need version control)
 
 **Step 1: Add as Git Submodule**
 
-Choose ONE repository URL:
-
 ```bash
 cd your-microservice
-# Option 1: Bitbucket (internal)
-git submodule add https://ilptltvbbp01.ecitele.com:8443/scm/~oshaked/ai-dev-extensions-core.git .dev-extensions
-
-# Option 2: GitHub (public)
-# git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core.git .dev-extensions
+git submodule add https://github.com/ornit-shaked/ai-dev-extensions-core.git .dev-extensions
 ```
-
-> **Note:** `git submodule add` automatically downloads all files. No separate initialization needed.
 
 **Step 2: Run Setup Script**
 
 **Windows:**
 ```powershell
-# Default: Windsurf
 .\.dev-extensions\scripts\setup-microservice.ps1
-
-# For other IDEs:
-.\.dev-extensions\scripts\setup-microservice.ps1 -IDE cursor
-.\.dev-extensions\scripts\setup-microservice.ps1 -IDE vscode
 ```
-
-> **IDE Support:** Default is Windsurf. Use `-IDE cursor` or `-IDE vscode` if needed.
-
-> **Windows Note:** The script automatically uses copy mode if you don't have admin privileges.
-> - **Copy mode** (automatic): Files are copied - works without admin, but requires re-running setup after package updates
-> - **Symlink mode** (recommended): Requires Administrator OR Developer Mode - updates automatically with package
 
 **Linux/Mac:**
 ```bash
 bash .dev-extensions/scripts/setup-microservice.sh
 ```
-
-**That's it!** The script will:
-- ✅ Detect your IDE (Windsurf/Cursor/VS Code)
-- ✅ Create symlinks for workflows and rules
-- ✅ Update `.gitignore`
-- ✅ Load default domains (`_core` + `architecture`)
 
 ---
 
