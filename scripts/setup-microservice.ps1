@@ -116,6 +116,8 @@ function Get-EnabledDomains {
         [string]$DomainMappingPath
     )
     
+    $ManifestPath = $DomainMappingPath
+    
     # Priority 1: Command line parameter
     if ($DomainsParam -ne "default") {
         if ($DomainsParam -eq "all") {
