@@ -119,7 +119,7 @@ task cleanupAiExtensions {
     }
 }
 
-task setupAiExtensions(dependsOn: [copyAiExtensions, updateGitignore, cleanupAiExtensions]) {
+task setupAiExtensions(dependsOn: [copyAiExtensions, updateGitignore]) {
     description = 'Complete setup of ai-dev-extensions-core'
     group = 'ai-extensions'
     
@@ -149,5 +149,5 @@ task setupAiExtensions(dependsOn: [copyAiExtensions, updateGitignore, cleanupAiE
     }
 }
 
-// Make cleanup run after setup
+// Make cleanup run after setup completes
 setupAiExtensions.finalizedBy cleanupAiExtensions
